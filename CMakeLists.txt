@@ -134,14 +134,7 @@ if(APPLE)
 endif()
 
 # source
-add_subdirectory (EventDisplayBase)
-add_subdirectory (EventGeneratorBase)
-add_subdirectory (G4Base)
-add_subdirectory (IFDatabase)
-add_subdirectory (MagneticField)
-add_subdirectory (NuBeamWeights)
-add_subdirectory (NuReweight)
-#add_subdirectory (dk2nu)
+add_subdirectory (nutools)
 
 # ups - table and config files
 add_subdirectory(ups)
