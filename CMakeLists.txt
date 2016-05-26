@@ -23,7 +23,7 @@ IF (NOT CETBUILDTOOLS_VERSION)
     MESSAGE (FATAL_ERROR "ERROR: setup cetbuildtools to get the cmake modules")
 ENDIF()
 
-set(CMAKE_MODULE_PATH $ENV{ART_DIR}/Modules
+set(CMAKE_MODULE_PATH $ENV{CANVAS_DIR}/Modules
                       $ENV{CETBUILDTOOLS_DIR}/Modules
                       ${CMAKE_MODULE_PATH})
 
@@ -39,11 +39,13 @@ cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
-find_ups_product( art v1_11_00 )
-find_ups_product( genie v2_8_0 )
-find_ups_product( libwda v2_21_0 )
-find_ups_product( postgresql v9_1_0 )
-find_ups_geant4( v4_10_1 )
+find_ups_product( art )
+find_ups_product( genie )
+find_ups_product( libwda )
+find_ups_product( postgresql )
+find_ups_product( nusimdata )
+find_ups_geant4( )
+find_ups_product( cetbuildtools )
 
 message(STATUS "ROOTSYS is ${ROOTSYS}")
 
@@ -132,15 +134,7 @@ if(APPLE)
 endif()
 
 # source
-add_subdirectory (EventDisplayBase)
-add_subdirectory (EventGeneratorBase)
-add_subdirectory (G4Base)
-add_subdirectory (IFDatabase)
-add_subdirectory (MagneticField)
-add_subdirectory (NuBeamWeights)
-add_subdirectory (NuReweight)
-add_subdirectory (SimulationBase)
-#add_subdirectory (dk2nu)
+add_subdirectory (nutools)
 
 # ups - table and config files
 add_subdirectory(ups)
