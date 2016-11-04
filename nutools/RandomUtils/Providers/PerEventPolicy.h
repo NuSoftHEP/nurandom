@@ -49,7 +49,7 @@ namespace rndm {
       using seed_t = typename base_t::seed_t;
       
       /// type for contextual event information
-      using EventData_t = SeedServiceHelper::EventSeedInputData;
+      using EventData_t = NuRandomServiceHelper::EventSeedInputData;
       
       typedef enum {
         saEventTimestamp_v1,             ///< event timestamp algorithm (v1)

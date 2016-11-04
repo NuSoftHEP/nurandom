@@ -7,7 +7,7 @@
 #ifndef NUTOOLS_RANDOMUTILS_ARTSTATE_H
 #define NUTOOLS_RANDOMUTILS_ARTSTATE_H 1
 
-// SeedService libraries
+// NuRandomService libraries
 #include "nutools/RandomUtils/Providers/EventSeedInputData.h"
 
 // framework libraries
@@ -26,9 +26,9 @@
 
 namespace rndm {
   
-  namespace SeedServiceHelper {
+  namespace NuRandomServiceHelper {
     
-    /// Describe the current state of art processing, as understood by the SeedService.
+    /// Describe the current state of art processing, as understood by the NuRandomService.
     class ArtState {
         public:
       typedef enum {
@@ -65,7 +65,7 @@ namespace rndm {
           state_type old_state = state();
           set_state(astate);
           LOG_DEBUG("ArtState")
-            << "SeedService::ArtState: transition from "
+            << "NuRandomService::ArtState: transition from "
             << stateName(old_state) << " to " << stateName();
           return old_state;
         } // transit_to()
@@ -160,7 +160,7 @@ namespace rndm {
             case inOther:              return "unidentified";
           } // switch
           throw art::Exception(art::errors::LogicError)
-            << "artext::SeedServiceHelper::ArtState::stateName: unknown state #"
+            << "artext::NuRandomServiceHelper::ArtState::stateName: unknown state #"
             << ((int) state) << "\n";
         } // stateName()
       
@@ -172,7 +172,7 @@ namespace rndm {
       std::string procName;
     }; // end ArtState
 
-  } // end namespace SeedServiceHelper
+  } // end namespace NuRandomServiceHelper
 
 } // namespace rndm
 

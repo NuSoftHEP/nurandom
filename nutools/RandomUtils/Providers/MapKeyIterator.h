@@ -16,7 +16,7 @@
 
 
 namespace rndm {
-  namespace SeedServiceHelper {
+  namespace NuRandomServiceHelper {
     
     
     /** ************************************************************************
@@ -122,7 +122,7 @@ namespace rndm {
       
     }; // class MapKeyConstIteratorBox<>
   
-  } // namespace SeedServiceHelper
+  } // namespace NuRandomServiceHelper
 } // namespace rndm
 
 #endif // NUTOOLS_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H

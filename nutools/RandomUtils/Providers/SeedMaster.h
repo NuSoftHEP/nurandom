@@ -3,7 +3,7 @@
  * @brief  A class to assist in the distribution of guaranteed unique seeds
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   20141111
- * @see    SeedService.h SeedMaster.cc
+ * @see    NuRandomService.h SeedMaster.cc
  */
 
 #ifndef NUTOOLS_RANDOMUTILS_PROVIDERS_SEEDMASTER_H
@@ -46,16 +46,16 @@ namespace rndm {
   /**
    * @brief A class to assist in the distribution of guaranteed unique seeds to all engine IDs.
    * @tparam SEED type of random engine seed
-   * @see SeedService
+   * @see NuRandomService
    *
    * @attention direct use of this class is limited to art-less contexts;
-   * within art, use `rndm::SeedService` instead.
+   * within art, use `rndm::NuRandomService` instead.
    * 
    * This class is configured from a FHiCL parameter set.
    * The complete configuration depends on the policy chosen; the following
    * parameters are common to all the policies:
    *     
-   *     SeedService : {
+   *     NuRandomService : {
    *        policy           : "autoIncrement" // Required: Other legal value are listed in SEED_SERVICE_POLICIES
    *        verbosity        : 0               // Optional: default=0, no informational printout
    *        endOfJobSummary  : false           // Optional: print list of all managed seeds at end of job.
@@ -71,7 +71,7 @@ namespace rndm {
    *     SeedMasterInstance.getSeed("moduleLabel");
    *     SeedMasterInstance.getSeed("moduleLabel", "instanceName");
    *     
-   * art module code requests a seed directly to SeedService service.
+   * art module code requests a seed directly to NuRandomService service.
    *
    * It is the callers responsibility to use the appropriate form.
    *
@@ -84,7 +84,7 @@ namespace rndm {
    * If the policy is defined as `autoIncrement`, the additional configurable
    * items are:
    *     
-   *     SeedService : {
+   *     NuRandomService : {
    *        policy           : "autoIncrement"
    *        // ... and all the common ones, plus:
    *        baseSeed         : 0     // Required: An integer >= 0.
@@ -99,7 +99,7 @@ namespace rndm {
    * If the policy is defined as `linearMapping`, the additional configurable
    * items are:
    *     
-   *     SeedService : {
+   *     NuRandomService : {
    *        policy           : "linearMapping"
    *        // ... and all the common ones, plus:
    *        nJob             : 0     // Required: An integer >= 0.
@@ -115,7 +115,7 @@ namespace rndm {
    * If the policy is defined as `preDefinedOffset`, the additional configurable
    * items are:
    *     
-   *     SeedService : {
+   *     NuRandomService : {
    *        policy           : "preDefinedOffset"
    *        // ... and all the common ones, plus:
    *        baseSeed         : 0     // Required: An integer >= 0.
@@ -136,7 +136,7 @@ namespace rndm {
    * If the policy is defined as `preDefinedSeed`, the additional configurable
    * items are:
    *     
-   *     SeedService : {
+   *     NuRandomService : {
    *        policy           : "preDefinedSeed"
    *        // ... and all the common ones, plus:
    *        
@@ -156,7 +156,7 @@ namespace rndm {
    * If the policy is defined as `random`, the additional configurable
    * items are:
    *     
-   *     SeedService : {
+   *     NuRandomService : {
    *        policy           : "random"
    *        // ... and all the common ones, plus:
    *        masterSeed: master_seed // optional: an integer >= 0
@@ -173,10 +173,10 @@ namespace rndm {
    * You can enable this policy instead of whatever is already in your
    * configuration by adding at the end of your configuration:
    *     
-   *     services.SeedService.policy: "random"
+   *     services.NuRandomService.policy: "random"
    *     
    * (this assumes that the configuration of the SeedMaster is read from
-   * `services.SeedService`, that is the case in the art framework).
+   * `services.NuRandomService`, that is the case in the art framework).
    * 
    * The FHiCL grammar to specify the offsets takes two forms.  If no instance name
    * is given, the offset is given by:
@@ -267,7 +267,7 @@ namespace rndm {
     
     /// An iterator to the configured engine IDs
     using EngineInfoIteratorBox
-      = SeedServiceHelper::MapKeyConstIteratorBox<EngineData_t>;
+      = NuRandomServiceHelper::MapKeyConstIteratorBox<EngineData_t>;
     
     SeedMaster(const fhicl::ParameterSet&);
     
@@ -585,7 +585,7 @@ typename rndm::SeedMaster<SEED>::seed_t rndm::SeedMaster<SEED>::reseedEvent
 //----------------------------------------------------------------------------
 template <typename SEED> template <typename Stream>
 void rndm::SeedMaster<SEED>::print(Stream&& log) const {
-  log << "\nSummary of seeds computed by the SeedService";
+  log << "\nSummary of seeds computed by the NuRandomService";
   
   // allow the policy implementation to print whatever it feels to
   std::ostringstream sstr;
@@ -741,7 +741,7 @@ void rndm::SeedMaster<SEED>::setPolicy(std::string policyName) {
   
   if (policy == unDefined) {
     std::ostringstream os;
-    os<< "SeedService::setPolicy(): Unrecognized policy: "
+    os<< "NuRandomService::setPolicy(): Unrecognized policy: "
       << policyName
       << "\n Known policies are: ";
     
@@ -766,7 +766,7 @@ void rndm::SeedMaster<SEED>::ensureUnique
     
     if ( p.second == seed ){
       throw art::Exception(art::errors::LogicError)
-        << "SeedService::ensureUnique() seed: "<<seed
+        << "NuRandomService::ensureUnique() seed: "<<seed
         << " already used by module.instance: " << p.first << "\n"
         << "May not be reused by module.instance: " << id;
     }

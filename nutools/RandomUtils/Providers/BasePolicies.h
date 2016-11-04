@@ -45,7 +45,7 @@ namespace rndm {
       using seed_t = SEED; ///< type of the random seed
       
       /// type of data used for event seeds
-      using EventData_t = SeedServiceHelper::EventSeedInputData;
+      using EventData_t = NuRandomServiceHelper::EventSeedInputData;
       
       /// An invalid seed
       static constexpr seed_t InvalidSeed = 0;
@@ -218,7 +218,7 @@ namespace rndm {
       if (operator()(seed)) return;
       seed_t offset = seed - BaseSeed;
       throw art::Exception(art::errors::LogicError)
-        << "SeedService (policy: " << policy << ") for engine: "
+        << "NuRandomService (policy: " << policy << ") for engine: "
         << id << " the offset of seed " << seed << " is: " << offset << "."
         "\nAllowed seed offsets are in the range 0....(N-1) where N is: "
         << MaxSeeds << " (as configured in maxUniqueEngines)";
@@ -586,7 +586,7 @@ namespace rndm {
         }
         if (!pset.get_if_present(id.moduleLabel, param)) {
           throw art::Exception(art::errors::Configuration)
-            << "SeedService: unable to find the parameter for '" << id << "'";
+            << "NuRandomService: unable to find the parameter for '" << id << "'";
         }
       } // if no instance name
       else { // Case 2: instance name is given.
@@ -602,13 +602,13 @@ namespace rndm {
         fhicl::ParameterSet subSet;
         if (!pset.get_if_present(id.moduleLabel, subSet)) {
           throw art::Exception(art::errors::Configuration)
-            << "SeedService: unable to find the parameter block for: '"
+            << "NuRandomService: unable to find the parameter block for: '"
             << id << "'";
         }
         
         if (!subSet.get_if_present(id.instanceName, param)) {
           throw art::Exception(art::errors::Configuration)
-            << "SeedService: unable to find the parameter value for: '"
+            << "NuRandomService: unable to find the parameter value for: '"
             << id << "'";
         }
       } // if instance name

@@ -15,7 +15,7 @@
 
 
 namespace rndm {
-  namespace SeedServiceHelper {
+  namespace NuRandomServiceHelper {
     
     /// Simple data structure with data needed to extract a seed from a event
     class EventSeedInputData {
@@ -58,7 +58,7 @@ namespace rndm {
         } // clear()
       
     }; // class EventSeedInputData
-  } // namespace SeedServiceHelper
+  } // namespace NuRandomServiceHelper
 } // namespace rndm
 
 
