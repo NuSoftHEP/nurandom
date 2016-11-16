@@ -22,16 +22,13 @@ source: {
 services: {
   message : @local::mf_interactive
   RandomNumberGenerator: {}
-
-  user : {
-     NuRandomService: {
-      policy            : "autoIncrement"
-      verbosity         :     2
-      endOfJobSummary   :  true
-      baseSeed          :   123
-      checkRange        :  false
-    }
-  }
+  NuRandomService: {
+   policy            : "autoIncrement"
+   verbosity         :     2
+   endOfJobSummary   :  true
+   baseSeed          :   123
+   checkRange        :  false
+ }
 } # services
 
 

@@ -29,7 +29,7 @@ autoincrement_NuRandomService: {
   # this is the first seed that is returned;
   # override it with:
   # 
-  # services.user.NuRandomService.baseSeed: MySeed
+  # services.NuRandomService.baseSeed: MySeed
   # 
   baseSeed          : 2829
   
@@ -50,7 +50,7 @@ linearmapping_NuRandomService: {
   
   # this is the number of this job in an absolute batch count; override it with:
   # 
-  # services.user.NuRandomService.nJob: NJOB
+  # services.NuRandomService.nJob: NJOB
   #
   nJob            :  1
   maxUniqueEngines: 20
