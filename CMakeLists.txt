@@ -136,9 +136,11 @@ endif()
 # source
 add_subdirectory (nutools)
 add_subdirectory (tools)
+add_subdirectory (test)
 
 # ups - table and config files
 add_subdirectory(ups)
 
 # packaging utility
 include(UseCPack)
+
