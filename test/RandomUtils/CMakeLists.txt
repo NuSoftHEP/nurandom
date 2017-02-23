@@ -10,7 +10,8 @@ art_make(
     ${MF_MESSAGELOGGER}
     ${MF_UTILITIES}
     ${FHICLCPP}
-    ${CETLIB}
+    cetlib
+    cetlib_except
     ${CLHEP}
   MODULE_LIBRARIES
     nutools_test_RandomUtils
@@ -22,16 +23,19 @@ art_make(
     ${MF_MESSAGELOGGER}
     ${MF_UTILITIES}
     ${FHICLCPP}
-    ${CETLIB}
+    cetlib
+    cetlib_except
     ${CLHEP}
   SERVICE_LIBRARIES
     nutools_RandomUtils_NuRandomService_service
-    art_Utilities canvas_Utilities
+    art_Utilities
+    canvas
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
     ${MF_MESSAGELOGGER}
     ${MF_UTILITIES}
     ${FHICLCPP}
-#     ${CETLIB}
+    cetlib
+    cetlib_except
     ${ROOT_CORE}
     ${ROOT_MATHCORE}
   NO_INSTALL

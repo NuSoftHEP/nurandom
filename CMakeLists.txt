@@ -44,6 +44,8 @@ find_ups_product( genie )
 find_ups_product( libwda )
 find_ups_product( postgresql )
 find_ups_product( nusimdata )
+find_ups_product( cetlib )
+find_ups_product( cetlib_except )
 find_ups_geant4( )
 find_ups_product( cetbuildtools )
 
