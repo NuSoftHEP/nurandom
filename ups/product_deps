@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nutools  v2_11_00
+parent nutools  v2_12_00
 defaultqual     e14
 
 # These optional lines define the installed directories where
@@ -18,27 +18,27 @@ bindir      fq_dir      bin
 # note that art -q nu: depends, via root, on geant4 and more
 # this means that we only need to list art, cry, and genie as a dependencies
 product         version
-art             v2_06_01
-nusimdata       v1_07_00
-genie           v2_12_2a
-geant4          v4_10_1_p03e
+art             v2_06_03
+nusimdata       v1_07_01
+genie           v2_12_2b
+geant4          v4_10_1_p03f
 cry             v1_7h
-ifdhc           v2_0_3
+ifdhc           v2_0_4
 libwda          v2_22_2
 
-cetbuildtools   v5_06_06        -        only_for_build
+cetbuildtools   v5_06_07        -        only_for_build
 end_product_list
 
 
 # -nq- here means there is no qualifier
 # a - here means the dependent product is not required by the parent and will not be setup
 qualifier     nusimdata    art             genie      cry         geant4    libwda  ifdhc           notes
-e14:debug     e14:debug    nu:e14:debug    e14:debug  e14:debug   e14:debug -nq-    e14:p2713b:debug
-e14:opt       e14:opt      nu:e14:opt      e14:opt    e14:opt     e14:opt   -nq-    e14:p2713b:opt
-e14:prof      e14:prof     nu:e14:prof     e14:prof   e14:prof    e14:prof  -nq-    e14:p2713b:prof
-e10:debug     e10:debug    nu:e10:debug    e10:debug  e10:debug   e10:debug -nq-    e10:p2713b:debug
-e10:opt       e10:opt      nu:e10:opt      e10:opt    e10:opt     e10:opt   -nq-    e10:p2713b:opt
-e10:prof      e10:prof     nu:e10:prof     e10:prof   e10:prof    e10:prof  -nq-    e10:p2713b:prof
+e14:debug     e14:debug    nu:e14:debug    e14:debug  e14:debug   e14:debug -nq-    e14:p2713d:debug
+e14:opt       e14:opt      nu:e14:opt      e14:opt    e14:opt     e14:opt   -nq-    e14:p2713d:opt
+e14:prof      e14:prof     nu:e14:prof     e14:prof   e14:prof    e14:prof  -nq-    e14:p2713d:prof
+e10:debug     e10:debug    nu:e10:debug    e10:debug  e10:debug   e10:debug -nq-    e10:p2713d:debug
+e10:opt       e10:opt      nu:e10:opt      e10:opt    e10:opt     e10:opt   -nq-    e10:p2713d:opt
+e10:prof      e10:prof     nu:e10:prof     e10:prof   e10:prof    e10:prof  -nq-    e10:p2713d:prof
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
