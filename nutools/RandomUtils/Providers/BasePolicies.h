@@ -1,5 +1,5 @@
 /**
- * @file   BasePolicy.h
+ * @file   BasePolicies.h
  * @brief  Defines an interface for random seed assignment policies
  * @author Gianluca Petrillo (petrillo@fnal.gov)
  * @date   20150211
