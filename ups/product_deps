@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nutools  v2_13_02
+parent nutools  v2_13_03
 defaultqual     e14
 
 # These optional lines define the installed directories where
@@ -20,13 +20,13 @@ bindir      fq_dir      bin
 product         version
 art             v2_06_03
 nusimdata       v1_07_01
-genie           v2_12_4a
-geant4          v4_10_3_p01
+genie           v2_12_6
+geant4          v4_10_3_p01a
 cry             v1_7h
-ifdhc           v2_0_6
+ifdhc           v2_0_7
 libwda          v2_23_0
 
-cetbuildtools   v5_06_07        -        only_for_build
+cetbuildtools   v5_09_01        -        only_for_build
 end_product_list
 
 
