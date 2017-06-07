@@ -162,9 +162,9 @@ void StartMessageFacility(fhicl::ParameterSet const& pset) {
       << mf_pset.to_indented_string(1) << std::endl;
   } // if no configuration is available
   
-  mf::StartMessageFacility(mf::MessageFacilityService::SingleThread, mf_pset);
+  mf::StartMessageFacility(mf_pset);
   mf::SetApplicationName("SeedMaster_test");
-  mf::SetContext("Initialization");
+  mf::SetContextIteration("Initialization");
   mf::LogInfo("MessageFacility") << "MessageFacility started.";
 } // StartMessageFacility()
 
@@ -176,7 +176,7 @@ void StartMessageFacility(fhicl::ParameterSet const& pset) {
 /// Tests a "module" with a given configuration
 int TestModule(SeedMaster_t& seeds, const fhicl::ParameterSet& pset) {
   
-  mf::SetModuleName("TestModule");
+  mf::SetContextSinglet("TestModule");
   
   using seed_t = SeedMaster_t::seed_t;
   
@@ -297,7 +297,7 @@ int main(int argc, const char** argv) {
   
   // initialize the message facility
   StartMessageFacility(global_pset);
-  mf::SetModuleName("main");
+  mf::SetContextSinglet("main");
   
   // read the configuration of the seed service
   fhicl::ParameterSet pset;
@@ -374,7 +374,7 @@ int main(int argc, const char** argv) {
       ++nErrors;
     }
   } // for
-  mf::SetModuleName("main");
+  mf::SetContextSinglet("main");
   
   
   //****************************************************************************
