@@ -17,6 +17,8 @@
 # use cmake 2.8 or later
 cmake_minimum_required (VERSION 3.3)
 
+project(nutools)
+
 # cetbuildtools contains our cmake modules
 SET ( CETBUILDTOOLS_VERSION $ENV{CETBUILDTOOLS_VERSION} )
 IF (NOT CETBUILDTOOLS_VERSION)
