@@ -166,6 +166,10 @@ include_directories( $ENV{DK2NU_INC} )
 cet_find_library( IFDH NAMES ifdh PATHS ENV IFDHC_LIB NO_DEFAULT_PATH )
 include_directories( $ENV{IFDHC_FQ_DIR}/inc )
 
+# ifdhc_art  # as a service
+cet_find_library( IFDH_SERVICE NAMES IFDH_service PATHS ENV IFDH_ART_LIB NO_DEFAULT_PATH )
+include_directories( $ENV{IFDH_ART_FQ_DIR}/inc )
+
 # macros
 include(ArtMake)
 include(ArtDictionary)
