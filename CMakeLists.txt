@@ -43,6 +43,8 @@ cet_report_compiler_flags()
 # these are minimum required versions, not the actual product versions
 find_ups_product( art )
 find_ups_product( genie )
+find_ups_product( dk2nudata )
+find_ups_product( dk2nugenie )
 find_ups_product( libwda )
 find_ups_product( postgresql )
 find_ups_product( nusimdata )
@@ -158,9 +160,9 @@ set(GENIE_LIB_LIST  ${GALGORITHM}
                     )
 
 # dk2nu
-cet_find_library( DK2NU_TREE  NAMES dk2nuTree  PATHS ENV DK2NU_LIB NO_DEFAULT_PATH )
-cet_find_library( DK2NU_GENIE NAMES dk2nuGenie PATHS ENV DK2NU_LIB NO_DEFAULT_PATH )
-include_directories( $ENV{DK2NU_INC} )
+cet_find_library( DK2NU_TREE  NAMES dk2nuTree  PATHS ENV DK2NUDATA_LIB NO_DEFAULT_PATH )
+cet_find_library( DK2NU_GENIE NAMES dk2nuGenie PATHS ENV DK2NUGENIE_LIB NO_DEFAULT_PATH )
+include_directories( $ENV{DK2NUDATA_INC} $ENV{DK2NUGENIE_INC} )
 
 # ifdhc
 cet_find_library( IFDH NAMES ifdh PATHS ENV IFDHC_LIB NO_DEFAULT_PATH )
