@@ -19,26 +19,28 @@ bindir      fq_dir      bin
 # this means that we only need to list art, cry, and genie as a dependencies
 product         version
 art             v2_09_06
-nusimdata       v1_09_01
-genie           v2_12_8c
+nusimdata       v1_09_02
+# genie           v2_12_8c # now via dk2nugenie
+dk2nugenie      v01_05_01b
 geant4          v4_10_3_p01b
 cry             v1_7i
-ifdhc           v2_3_2
+# switch to ifdh_art as a service, rather than direct ifdh calls
+ifdh_art        v2_05_03
 libwda          v2_24_0
 
-cetbuildtools   v6_01_01        -        only_for_build
+cetbuildtools   v7_00_02        -        only_for_build
 end_product_list
 
 
 # -nq- here means there is no qualifier
 # a - here means the dependent product is not required by the parent and will not be setup
-qualifier     nusimdata    art             genie      cry         geant4    libwda  ifdhc           notes
-e14:debug     e14:debug    nu:e14:debug    e14:debug  e14:debug   e14:debug -nq-    e14:p2714:debug
-e14:opt       e14:opt      nu:e14:opt      e14:opt    e14:opt     e14:opt   -nq-    e14:p2714:opt
-e14:prof      e14:prof     nu:e14:prof     e14:prof   e14:prof    e14:prof  -nq-    e14:p2714:prof
-e15:debug     e15:debug    nu:e15:debug    e15:debug  e15:debug   e15:debug -nq-    e15:p2714:debug
-e15:opt       e15:opt      nu:e15:opt      e15:opt    e15:opt     e15:opt   -nq-    e15:p2714:opt
-e15:prof      e15:prof     nu:e15:prof     e15:prof   e15:prof    e15:prof  -nq-    e15:p2714:prof
+qualifier     nusimdata    art             dk2nugenie cry         geant4    libwda  ifdh_art           notes
+e14:debug     e14:debug    nu:e14:debug    e14:debug  e14:debug   e14:debug -nq-    nu:e14:s62:debug
+e14:opt       e14:opt      nu:e14:opt      e14:opt    e14:opt     e14:opt   -nq-    nu:e14:s62:opt
+e14:prof      e14:prof     nu:e14:prof     e14:prof   e14:prof    e14:prof  -nq-    nu:e14:s62:prof
+e15:debug     e15:debug    nu:e15:debug    e15:debug  e15:debug   e15:debug -nq-    nu:e15:s62:debug
+e15:opt       e15:opt      nu:e15:opt      e15:opt    e15:opt     e15:opt   -nq-    nu:e15:s62:opt
+e15:prof      e15:prof     nu:e15:prof     e15:prof   e15:prof    e15:prof  -nq-    nu:e15:s62:prof
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
