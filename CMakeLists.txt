@@ -6,7 +6,7 @@
 #  cmake [-DCMAKE_INSTALL_PREFIX=/install/path]
 #        -DCMAKE_BUILD_TYPE=$CETPKG_TYPE
 #        $CETPKG_SOURCE
-#        
+#
 #  make
 #  make test
 #  make install
@@ -33,16 +33,18 @@ include(CetCMakeEnv)
 cet_cmake_env()
 
 # -D_GLIBCXX_USE_NANOSLEEP is needed to make std::this_thread::sleep_for available.
-cet_set_compiler_flags(DIAGS CAUTIOUS WERROR 
+cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
                        NO_UNDEFINED
-                       EXTRA_FLAGS -pedantic 
-                       EXTRA_CXX_FLAGS -D_GLIBCXX_USE_NANOSLEEP 
+                       EXTRA_FLAGS -pedantic
+                       EXTRA_CXX_FLAGS -D_GLIBCXX_USE_NANOSLEEP
                                        -Wno-unused-local-typedefs -Wno-variadic-macros)
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
 find_ups_product( art )
 find_ups_product( genie )
+find_ups_product( dk2nudata )
+find_ups_product( dk2nugenie )
 find_ups_product( libwda )
 find_ups_product( postgresql )
 find_ups_product( nusimdata )
@@ -114,11 +116,63 @@ cet_find_library( GMUELOSS NAMES GMuELoss PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
 cet_find_library( GREWEIGHT NAMES GReWeight PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
 cet_find_library( GNUCLEONDECAY NAMES GNucleonDecay PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
 
+set(GENIE_LIB_LIST  ${GALGORITHM}
+                    ${GBARYONRESONANCE}
+                    ${GBASE}
+                    ${GBODEKYANG}
+                    ${GCHARM}
+                    ${GCOH}
+                    ${GDFRC}
+                    ${GDIS}
+                    ${GCROSSSECTIONS}
+                    ${GDECAY}
+                    ${GELAS}
+                    ${GELFF}
+                    ${GHEP}
+                    ${GEVGCORE}
+                    ${GEVGMODULES}
+                    ${GEVGDRIVERS}
+                    ${GGIBUU}
+                    ${GHADRONTRANSP}
+                    ${GFRAGMENTATION}
+                    ${GINTERACTION}
+                    ${GLLEWELLYNSMITH}
+                    ${GMEC}
+                    ${GMESSENGER}
+                    ${GNUGAMMA}
+                    ${GNUE}
+                    ${GNTUPLE}
+                    ${GNUCLEAR}
+                    ${GNUMERICAL}
+                    ${GQPM}
+                    ${GPDG}
+                    ${GPDF}
+                    ${GQEL}
+                    ${GRES}
+                    ${GREGISTRY}
+                    ${GREINSEHGAL}
+                    ${GUTILS}
+                    ${GGEO}
+                    ${GFLUXDRIVERS}
+                    ${GMUELOSS}
+                    ${GREWEIGHT}
+                    ${GNUCLEONDECAY}
+                    )
+
+# dk2nu
+cet_find_library( DK2NU_TREE  NAMES dk2nuTree  PATHS ENV DK2NUDATA_LIB NO_DEFAULT_PATH )
+cet_find_library( DK2NU_GENIE NAMES dk2nuGenie PATHS ENV DK2NUGENIE_LIB NO_DEFAULT_PATH )
+include_directories( $ENV{DK2NUDATA_INC} $ENV{DK2NUGENIE_INC} )
+
 # ifdhc
 cet_find_library( IFDH NAMES ifdh PATHS ENV IFDHC_LIB NO_DEFAULT_PATH )
 include_directories( $ENV{IFDHC_FQ_DIR}/inc )
 
-# macros 
+# ifdhc_art  # as a service
+cet_find_library( IFDH_SERVICE NAMES IFDH_service PATHS ENV IFDH_ART_LIB NO_DEFAULT_PATH )
+include_directories( $ENV{IFDH_ART_FQ_DIR}/inc )
+
+# macros
 include(ArtMake)
 include(ArtDictionary)
 include(BuildPlugins)
