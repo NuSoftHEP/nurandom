@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nutools  v2_17_04
+parent nutools  v2_18_00
 defaultqual     e14
 
 # These optional lines define the installed directories where
@@ -19,9 +19,9 @@ bindir      fq_dir      bin
 # this means that we only need to list art, cry, and genie as a dependencies
 product         version
 art             v2_09_06
-nusimdata       v1_09_02
+nusimdata       v1_10_00
 # genie           v2_12_8c # now via dk2nugenie
-dk2nugenie      v01_05_01b
+dk2nugenie      v01_06_00
 geant4          v4_10_3_p01b
 cry             v1_7i
 # switch to ifdh_art as a service, rather than direct ifdh calls
@@ -36,10 +36,8 @@ end_product_list
 # a - here means the dependent product is not required by the parent and will not be setup
 qualifier     nusimdata    art             dk2nugenie cry         geant4    libwda  ifdh_art           notes
 e14:debug     e14:debug    nu:e14:debug    e14:debug  e14:debug   e14:debug -nq-    nu:e14:s62:debug
-e14:opt       e14:opt      nu:e14:opt      e14:opt    e14:opt     e14:opt   -nq-    nu:e14:s62:opt
 e14:prof      e14:prof     nu:e14:prof     e14:prof   e14:prof    e14:prof  -nq-    nu:e14:s62:prof
 e15:debug     e15:debug    nu:e15:debug    e15:debug  e15:debug   e15:debug -nq-    nu:e15:s62:debug
-e15:opt       e15:opt      nu:e15:opt      e15:opt    e15:opt     e15:opt   -nq-    nu:e15:s62:opt
 e15:prof      e15:prof     nu:e15:prof     e15:prof   e15:prof    e15:prof  -nq-    nu:e15:s62:prof
 end_qualifier_list
 
