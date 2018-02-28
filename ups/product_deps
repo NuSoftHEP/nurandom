@@ -32,6 +32,8 @@ end_product_list
 # -nq- here means there is no qualifier
 # a - here means the dependent product is not required by the parent and will not be setup
 qualifier     nusimdata    art          dk2nugenie cry         geant4    ifdh_art           notes
+c2:debug      c2:debug     c2:debug     c2:debug   c2:debug    c2:debug  c2:s65:debug
+c2:prof       c2:prof      c2:prof      c2:prof    c2:prof     c2:prof   c2:s65:prof
 e15:debug     e15:debug    e15:debug    e15:debug  e15:debug   e15:debug e15:s65:debug
 e15:prof      e15:prof     e15:prof     e15:prof   e15:prof    e15:prof  e15:s65:prof
 end_qualifier_list
