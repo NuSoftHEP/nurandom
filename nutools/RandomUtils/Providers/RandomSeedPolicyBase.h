@@ -323,7 +323,7 @@ namespace rndm {
         { base_t::configure(pset); static_configure(pset); }
       
       /// Returns the next random number
-      virtual seed_t getSeed(SeedMasterHelper::EngineId const& id)
+      virtual seed_t getSeed(SeedMasterHelper::EngineId const& id) override
         {
           seed_t seed = this->createSeed(id);
           ensureRange(id, seed);
