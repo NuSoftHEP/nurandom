@@ -77,7 +77,7 @@ namespace rndm {
         { out << "Random policy: '" << getName() << "'"; }
       
       /// Returns whether the returned seed should be unique
-      virtual bool yieldsUniqueSeeds() const { return true; }
+      virtual bool yieldsUniqueSeeds() const override { return true; }
       
         protected:
       std::string name; ///< name of the policy
@@ -661,7 +661,7 @@ namespace rndm {
       
       
       /// Returns whether the returned seed should be unique: for us it "no".
-      virtual bool yieldsUniqueSeeds() const { return false; }
+      virtual bool yieldsUniqueSeeds() const override { return false; }
       
         protected:
       

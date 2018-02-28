@@ -80,7 +80,7 @@ namespace testing {
       CLHEP::RandFlat flat(engine);
       constexpr size_t NStats = 6;
       static const std::array<std::string, NStats> statNames
-        = { "STR", "DEX", "CON", "INT", "WIS", "CHA" };
+        = {{ "STR", "DEX", "CON", "INT", "WIS", "CHA" }};
       std::array<unsigned short int, NStats> stats;
       std::generate(stats.begin(), stats.end(), [&flat]{ return RollStat(flat); });
       

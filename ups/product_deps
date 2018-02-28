@@ -1,7 +1,7 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nutools  v2_18_02
-defaultqual     e14
+parent nutools  v2_19_00
+defaultqual     e15
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -15,30 +15,25 @@ incdir      product_dir include
 libdir      fq_dir      lib
 bindir      fq_dir      bin
 #
-# note that art -q nu: depends, via root, on geant4 and more
+# note that art -q  depends, via root, on geant4 and more
 # this means that we only need to list art, cry, and genie as a dependencies
 product         version
-art             v2_09_06
-nusimdata       v1_10_00
-# genie           v2_12_8c # now via dk2nugenie
-dk2nugenie      v01_06_01
-geant4          v4_10_3_p01b
-cry             v1_7i
-# switch to ifdh_art as a service, rather than direct ifdh calls
-ifdh_art        v2_05_03
-libwda          v2_24_0
+art             v2_10_03
+nusimdata       v1_11_00
+dk2nugenie      v01_06_01a
+geant4          v4_10_3_p01c
+cry             v1_7j
+ifdh_art        v2_05_05
 
-cetbuildtools   v7_00_02        -        only_for_build
+cetbuildtools   v7_00_03        -        only_for_build
 end_product_list
 
 
 # -nq- here means there is no qualifier
 # a - here means the dependent product is not required by the parent and will not be setup
-qualifier     nusimdata    art             dk2nugenie cry         geant4    libwda  ifdh_art           notes
-e14:debug     e14:debug    nu:e14:debug    e14:debug  e14:debug   e14:debug -nq-    nu:e14:s62:debug
-e14:prof      e14:prof     nu:e14:prof     e14:prof   e14:prof    e14:prof  -nq-    nu:e14:s62:prof
-e15:debug     e15:debug    nu:e15:debug    e15:debug  e15:debug   e15:debug -nq-    nu:e15:s62:debug
-e15:prof      e15:prof     nu:e15:prof     e15:prof   e15:prof    e15:prof  -nq-    nu:e15:s62:prof
+qualifier     nusimdata    art          dk2nugenie cry         geant4    ifdh_art           notes
+e15:debug     e15:debug    e15:debug    e15:debug  e15:debug   e15:debug e15:s65:debug
+e15:prof      e15:prof     e15:prof     e15:prof   e15:prof    e15:prof  e15:s65:prof
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
