@@ -64,7 +64,7 @@ namespace rndm {
         { this_t::configure(pset); }
       
       /// Returns whether the returned seed should be unique: for us it "no".
-      virtual bool yieldsUniqueSeeds() const { return false; }
+      virtual bool yieldsUniqueSeeds() const override { return false; }
       
       
       /**

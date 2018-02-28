@@ -242,7 +242,7 @@ namespace rndm {
       
       
       /// Returns whether the returned seed should be unique: for us it "no".
-      virtual bool yieldsUniqueSeeds() const { return false; }
+      virtual bool yieldsUniqueSeeds() const override { return false; }
       
         protected:
       
