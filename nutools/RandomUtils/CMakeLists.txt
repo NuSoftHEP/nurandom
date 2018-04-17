@@ -10,7 +10,6 @@ art_make(
     art_Framework_Services_Optional_RandomNumberGenerator_service
     canvas
     MF_MessageLogger
-    MF_Utilities
     fhiclcpp
     cetlib
     cetlib_except
