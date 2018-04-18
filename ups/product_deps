@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nutools  v2_22_00
+parent nutools  v2_22_01
 defaultqual     e15
 
 # These optional lines define the installed directories where
@@ -15,14 +15,12 @@ incdir      product_dir include
 libdir      fq_dir      lib
 bindir      fq_dir      bin
 #
-# note that art -q  depends, via root, on geant4 and more
-# this means that we only need to list art, cry, and genie as a dependencies
 product         version
 art             v2_11_01
 nusimdata       v1_13_00
 dk2nugenie      v01_06_01e
 geant4          v4_10_3_p01d
-cry             v1_7j
+cry             v1_7k
 ifdh_art        v2_06_01
 
 cetbuildtools   v7_03_01        -        only_for_build
