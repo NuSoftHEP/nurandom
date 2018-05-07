@@ -1,0 +1,41 @@
+#
+# File:    test_generatedtimestamp.fcl
+# Purpose: creates event with GeneratedEventTimestamp plugin.
+# Author:  Gianluca Petrillo (petrillo@fnal.gov)
+# Date:    May 3, 2018
+# Version: 1.0
+# 
+# This configuration enables all the output from `GeneratedEventTimestamp`
+# plugin and creates a few empty events.
+# 
+# This is not really a test, in the sense that running it will not fail in any
+# circumstance.
+# It's still useful to observe the behaviour of the plugin.
+#
+
+process_name: Empty
+
+services: {
+  message: {
+    debugModules: [ "*" ]
+    destinations: {
+      console: {
+        type: cout
+        threshold: DEBUG
+        categories: {
+          GeneratedEventTimestamp: { limit: -1 }
+          default:                 { limit:  0 } # suppress everything else
+        } # categories
+      } # console
+      
+    } # destinations
+    
+  } # message
+  
+} # services
+
+source: {
+  module_type: EmptyEvent
+  maxEvents:   5
+  timestampPlugin: { plugin_type: "GeneratedEventTimestamp" }
+} # source
