@@ -15,6 +15,7 @@
 
 // Framework includes.
 #include "canvas/Utilities/Exception.h"
+#include "art/Framework/Core/detail/EngineCreator.h"
 #include "art/Framework/Services/Optional/RandomNumberGenerator.h"
 
 // forward declarations
@@ -28,7 +29,7 @@ namespace testing {
   namespace NuRandomService {
     
     /// Type of seed
-    using seed_t = art::RandomNumberGenerator::seed_t;
+    using seed_t = art::detail::EngineCreator::seed_t;
     
     /// Returns whether the exception looks to be from NuRandomService
     bool isSeedServiceException(std::exception const& e);

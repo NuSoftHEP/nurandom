@@ -15,6 +15,8 @@
 #include "canvas/Utilities/Exception.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
+#include "art/Persistency/Provenance/ModuleContext.h"
+#include "art/Persistency/Provenance/ScheduleContext.h"
 
 // supporting libraries
 #include "messagefacility/MessageLogger/MessageLogger.h"
@@ -162,7 +164,7 @@ void testing::GlobalEngineUserTestService::postModuleConstruction
 
      
 void testing::GlobalEngineUserTestService::preModuleBeginRun
-  (art::ModuleDescription const&)
+  (art::ModuleContext const&)
 {
    if (!perEventSeeds) {
      LOG_DEBUG("GlobalEngineUserTestService")
@@ -173,7 +175,7 @@ void testing::GlobalEngineUserTestService::preModuleBeginRun
 
      
 void testing::GlobalEngineUserTestService::postModuleBeginRun
-  (art::ModuleDescription const&)
+  (art::ModuleContext const&)
 {
    if (!perEventSeeds) {
      LOG_DEBUG("GlobalEngineUserTestService")
@@ -183,7 +185,7 @@ void testing::GlobalEngineUserTestService::postModuleBeginRun
 } // testing::GlobalEngineUserTestService::postModuleBeginRun()
 
      
-void testing::GlobalEngineUserTestService::preProcessEvent(art::Event const&) {
+void testing::GlobalEngineUserTestService::preProcessEvent(art::Event const&, art::ScheduleContext) {
    LOG_DEBUG("GlobalEngineUserTestService")
      << "GlobalEngineUserTestService::preProcessEvent()";
    CheckAllSeeds();
@@ -191,7 +193,7 @@ void testing::GlobalEngineUserTestService::preProcessEvent(art::Event const&) {
 
      
 void testing::GlobalEngineUserTestService::preModule
-  (art::ModuleDescription const&)
+  (art::ModuleContext const&)
 {
    LOG_DEBUG("GlobalEngineUserTestService")
      << "GlobalEngineUserTestService::preModule()";
@@ -200,7 +202,7 @@ void testing::GlobalEngineUserTestService::preModule
 
      
 void testing::GlobalEngineUserTestService::postModule
-  (art::ModuleDescription const&)
+  (art::ModuleContext const&)
 {
    if (!perEventSeeds) {
      LOG_DEBUG("GlobalEngineUserTestService")
@@ -210,7 +212,7 @@ void testing::GlobalEngineUserTestService::postModule
 } // testing::GlobalEngineUserTestService::postModule()
 
      
-void testing::GlobalEngineUserTestService::postProcessEvent(art::Event const&) {
+void testing::GlobalEngineUserTestService::postProcessEvent(art::Event const&, art::ScheduleContext) {
    LOG_DEBUG("GlobalEngineUserTestService")
      << "GlobalEngineUserTestService::postProcessEvent()";
    CheckAllSeeds();

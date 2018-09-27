@@ -15,6 +15,7 @@
 #include "art/Framework/Principal/SubRun.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
+#include "art/Persistency/Provenance/ModuleContext.h"
 #include "art/Persistency/Provenance/ModuleDescription.h"
 #include "canvas/Persistency/Provenance/EventID.h"
 
@@ -126,65 +127,6 @@ namespace rndm {
     return { querySeed(id), false };
     
   } // NuRandomService::findSeed()
-  
-  
-  //----------------------------------------------------------------------------
-  NuRandomService::seed_t NuRandomService::createEngine(
-    art::EngineCreator& module, std::string type,
-    std::string instance /* = "" */
-  ) {
-    EngineId id = qualify_engine_label(instance);
-    const seed_t seed = prepareEngine(id, RandomNumberGeneratorSeeder);
-    module.createEngine(seed, type, instance);
-    mf::LogInfo("NuRandomService")
-      << "Seeding " << type << " engine \"" << id.artName()
-      << "\" with seed " << seed << ".";
-    return seed;
-  } // NuRandomService::createEngine(strings)
-  
-  
-  NuRandomService::seed_t NuRandomService::createEngine(art::EngineCreator& module) {
-    EngineId id = qualify_engine_label();
-    const seed_t seed = prepareEngine(id, RandomNumberGeneratorSeeder);
-    module.createEngine(seed);
-    mf::LogInfo("NuRandomService")
-      << "Seeding default-type engine \"" << id.artName()
-      << "\" with seed " << seed << ".";
-    return seed;
-  } // NuRandomService::createEngine()
-  
-  
-  NuRandomService::seed_t NuRandomService::createEngine(
-    art::EngineCreator& module, std::string type,
-    std::string instance,
-    fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
-  ) {
-    EngineId id = qualify_engine_label(instance);
-    registerEngineAndSeeder(id, RandomNumberGeneratorSeeder);
-    std::pair<seed_t, bool> seedInfo = findSeed(id, pset, pnames);
-    module.createEngine(seedInfo.first, type, instance);
-    mf::LogInfo("NuRandomService")
-      << "Seeding " << type << " engine \"" << id.artName()
-      << "\" with seed " << seedInfo.first << ".";
-    if (seedInfo.second) freezeSeed(id, seedInfo.first);
-    return seedInfo.first;
-  } // NuRandomService::createEngine(ParameterSet)
-  
-  
-  NuRandomService::seed_t NuRandomService::createEngine(
-    art::EngineCreator& module,
-    fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
-  ) {
-    EngineId id = qualify_engine_label();
-    registerEngineAndSeeder(id, RandomNumberGeneratorSeeder);
-    std::pair<seed_t, bool> seedInfo = findSeed(id, pset, pnames);
-    module.createEngine(seedInfo.first);
-    mf::LogInfo("NuRandomService")
-      << "Seeding default-type engine \"" << id.artName()
-      << "\" with seed " << seedInfo.first << ".";
-    if (seedInfo.second) freezeSeed(id, seedInfo.first);
-    return seedInfo.first;
-  } // NuRandomService::createEngine(ParameterSet)
   
   
   NuRandomService::seed_t NuRandomService::registerEngine
@@ -332,7 +274,9 @@ namespace rndm {
     // no check is performed to verify that the current module is the one
     // specified in id.moduleLabel -- but that is required!
     art::ServiceHandle<art::RandomNumberGenerator> rng;
-    CLHEP::HepRandomEngine& engine = rng->getEngine(id.instanceName);
+    CLHEP::HepRandomEngine& engine = rng->getEngine(art::ScheduleID::first(),
+                                                    id.moduleLabel,
+                                                    id.instanceName);
     engine.setSeed(seed, 0); // the 0 is dummy... or so one hopes
   } // NuRandomService::RandomNumberGeneratorSeeder()
   
@@ -390,16 +334,16 @@ namespace rndm {
     state.reset_state();
   } // NuRandomService::postModuleConstruction()
   
-  void NuRandomService::preModuleBeginRun(art::ModuleDescription const& md) {
+  void NuRandomService::preModuleBeginRun(art::ModuleContext const& mc) {
     state.transit_to(NuRandomServiceHelper::ArtState::inModuleBeginRun);
-    state.set_module(md);
+    state.set_module(mc.moduleDescription());
   } // NuRandomService::preModuleBeginRun()
   
-  void NuRandomService::postModuleBeginRun(art::ModuleDescription const&) {
+  void NuRandomService::postModuleBeginRun(art::ModuleContext const&) {
     state.reset_state();
   } // NuRandomService::postModuleBeginRun()
   
-  void NuRandomService::preProcessEvent(art::Event const& evt) {
+  void NuRandomService::preProcessEvent(art::Event const& evt, art::ScheduleContext) {
     state.transit_to(NuRandomServiceHelper::ArtState::inEvent);
     state.set_event(evt);
     seeds.onNewEvent(); // inform the seed master that a new event has come
@@ -409,23 +353,23 @@ namespace rndm {
     
   } // NuRandomService::preProcessEvent()
   
-  void NuRandomService::preModule(art::ModuleDescription const& md) {
+  void NuRandomService::preModule(art::ModuleContext const& mc) {
     state.transit_to(NuRandomServiceHelper::ArtState::inModuleEvent);
-    state.set_module(md);
+    state.set_module(mc.moduleDescription());
     
     // Reseed all the engine of this module... maybe
     // (that is, if the current policy alows it).
     LOG_DEBUG("NuRandomService") << "preModule(): will reseed engines for module '"
-      << md.moduleLabel() << "'";
-    reseedModule(md.moduleLabel());
+      << mc.moduleLabel() << "'";
+    reseedModule(mc.moduleLabel());
   } // NuRandomService::preModule()
   
-  void NuRandomService::postModule(art::ModuleDescription const&) {
+  void NuRandomService::postModule(art::ModuleContext const&) {
     state.reset_module();
     state.reset_state();
   } // NuRandomService::postModule()
   
-  void NuRandomService::postProcessEvent(art::Event const&) {
+  void NuRandomService::postProcessEvent(art::Event const&, art::ScheduleContext) {
     state.reset_event();
     state.reset_state();
   } // NuRandomService::postProcessEvent()

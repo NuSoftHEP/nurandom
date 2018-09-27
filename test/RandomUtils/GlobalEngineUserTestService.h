@@ -17,6 +17,7 @@
 // From art and its tool chain.
 #include "fhiclcpp/ParameterSet.h"
 #include "art/Framework/Services/Registry/ServiceMacros.h"
+#include "art/Persistency/Provenance/ScheduleContext.h"
 
 // ROOT libraries
 #include "TRandom.h"
@@ -30,6 +31,7 @@
 // Forward declarations
 namespace art {
   class ActivityRegistry;
+  class ModuleContext;
   class ModuleDescription;
 }
 
@@ -82,12 +84,12 @@ namespace testing {
       // callbacks
       void preModuleConstruction (art::ModuleDescription const&);
       void postModuleConstruction(art::ModuleDescription const&);
-      void preModuleBeginRun     (art::ModuleDescription const&);
-      void postModuleBeginRun    (art::ModuleDescription const&);
-      void preProcessEvent       (art::Event const& evt);
-      void preModule             (art::ModuleDescription const&);
-      void postModule            (art::ModuleDescription const&);
-      void postProcessEvent      (art::Event const&);
+      void preModuleBeginRun     (art::ModuleContext const&);
+      void postModuleBeginRun    (art::ModuleContext const&);
+      void preProcessEvent       (art::Event const& evt, art::ScheduleContext);
+      void preModule             (art::ModuleContext const&);
+      void postModule            (art::ModuleContext const&);
+      void postProcessEvent      (art::Event const&, art::ScheduleContext);
       void preModuleEndJob       (art::ModuleDescription const&);
       void postModuleEndJob      (art::ModuleDescription const&);
       

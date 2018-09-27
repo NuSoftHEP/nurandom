@@ -20,7 +20,6 @@
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/SubRun.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
-#include "art/Framework/Services/System/CurrentModule.h"
 #include "art/Framework/Services/Optional/RandomNumberGenerator.h"
 
 // supporting libraries
@@ -81,6 +80,7 @@ namespace testing {
     unsigned int nExpectedErrors; ///< number of expected errors
     bool useGenerators; ///< instanciate and use random number generators
     bool perEventSeeds; ///< whether we expect different seeds on each event
+    std::string const moduleLabel; ///< configured module label
     
     unsigned int nErrors = 0; ///< Number of errors detected so far
     
@@ -117,6 +117,7 @@ testing::SeedTestPolicy::SeedTestPolicy(fhicl::ParameterSet const& pset)
   , nExpectedErrors(pset.get<unsigned int>            ("expectedErrors", 0U))
   , useGenerators  (pset.get<bool>                    ("useGenerators", true))
   , perEventSeeds  (pset.get<bool>                    ("perEventSeeds", false))
+  , moduleLabel    (pset.get<std::string>             ("module_label"))
 {
   
   //
@@ -331,7 +332,7 @@ CLHEP::HepRandomEngine& testing::SeedTestPolicy::getRandomEngine
   return isLocalEngine(iEngine)
     ? (*localEngine)
     : art::ServiceHandle<art::RandomNumberGenerator>()
-        ->getEngine(instanceNames.at(iEngine))
+    ->getEngine(art::ScheduleID::first(), moduleLabel, instanceNames.at(iEngine))
     ;
 } // testing::SeedTestPolicy::getRandomEngine()
 
