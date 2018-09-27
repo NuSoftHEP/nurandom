@@ -32,11 +32,11 @@
 #include "canvas/Utilities/Exception.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
+#include "art/Framework/Core/detail/EngineCreator.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/SubRun.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
-#include "art/Framework/Services/System/CurrentModule.h"
 #include "art/Framework/Services/Optional/RandomNumberGenerator.h"
 
 namespace testing {
@@ -61,7 +61,7 @@ namespace testing {
    */
   class RandomManagerTest: public art::EDAnalyzer {
       public:
-    typedef art::RandomNumberGenerator::seed_t seed_t;
+    typedef art::detail::EngineCreator::seed_t seed_t;
     
     explicit RandomManagerTest(fhicl::ParameterSet const& pset);
     
@@ -113,9 +113,7 @@ namespace testing {
         << "' with RandomNumberGenerator";
       seed_t seed
         = pset.get<unsigned int>("Seed_" + standardInstanceName, 0);
-      createEngine(seed, "HepJamesRandom", standardInstanceName);
-      stdEngine = &(art::ServiceHandle<art::RandomNumberGenerator>()
-        ->getEngine(standardInstanceName));
+      stdEngine = &createEngine(seed, "HepJamesRandom", standardInstanceName);
     } // if we have the external engine
     
     // initialize the standard engines with RandomNumberGenerator
@@ -161,7 +159,7 @@ namespace testing {
     std::vector<std::string> allInstances(instanceNames);
     std::vector<CLHEP::HepRandomEngine*> allEngines;
     for (std::string const& instanceName: instanceNames)
-      allEngines.push_back(&rng->getEngine(instanceName));
+      allEngines.push_back(&rng->getEngine(art::ScheduleID::first(), moduleName(), instanceName));
     
     if (extEngine) {
       allInstances.push_back(externalInstanceName);
@@ -188,7 +186,7 @@ namespace testing {
   
   
   inline std::string RandomManagerTest::moduleName() const
-    { return art::ServiceHandle<art::CurrentModule>()->label(); }
+    { return moduleDescription().moduleLabel(); }
   
   
 } // end namespace testing
