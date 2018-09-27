@@ -76,6 +76,8 @@ cet_find_library( CRY NAMES CRY PATHS ENV CRY_LIB NO_DEFAULT_PATH )
 # use GENIE UPS version to decide ...
 parse_ups_version( ${GENIE_VERSION} )
 if( ${VMAJ} LESS 3 )
+message(STATUS " ")
+message(STATUS "using GENIE 2")
   add_definitions(-DGENIE_PRE_R3)
 #  MESSAGE("--NUTOOLS-- GENIE_VERSION=${VMAJ} ${VMIN} -DGENIE_PRE_R3")
 # these are the pre-R-3 library names
