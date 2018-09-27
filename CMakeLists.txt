@@ -37,7 +37,6 @@ cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
                        NO_UNDEFINED
                        EXTRA_FLAGS -pedantic
                        EXTRA_CXX_FLAGS -D_GLIBCXX_USE_NANOSLEEP
-                                       -DGENIE_PRE_R3
                                        -Wno-unused-local-typedefs -Wno-variadic-macros)
 cet_report_compiler_flags()
 
