@@ -362,6 +362,7 @@ namespace rndm {
   class NuRandomService {
       public:
     using seed_t = art::detail::EngineCreator::seed_t;
+    using engine_t = CLHEP::HepRandomEngine;
     
     using SeedMaster_t = SeedMaster<seed_t>; ///< type of object providing seeds
     
@@ -455,6 +456,7 @@ namespace rndm {
       { return seeds.getCurrentSeed(qualify_global_engine(instanceName)); }
     
     
+#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
     /// @{
     /**
      * @name Create and register an engine
@@ -583,6 +585,7 @@ namespace rndm {
     //@}
     
     /// @}
+#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
     
     /// @{
     /// @name Register an existing engine
@@ -987,6 +990,7 @@ namespace rndm {
  }; // class NuRandomService
   
   
+#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
   //----------------------------------------------------------------------------
   template <typename Module>
   NuRandomService::seed_t NuRandomService::createEngine(
@@ -1047,6 +1051,8 @@ namespace rndm {
     return seedInfo.first;
   } // NuRandomService::createEngine(ParameterSet)
   
+#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+
 } // namespace rndm
 
 DECLARE_ART_SERVICE(rndm::NuRandomService, LEGACY)
