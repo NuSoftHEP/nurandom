@@ -40,7 +40,7 @@ namespace rndm {
     , bPrintEndOfJobSummary(paramSet.get<bool>("endOfJobSummary",false))
   {
     state.transit_to(NuRandomServiceHelper::ArtState::inServiceConstructor);
-    
+
     // Register callbacks.
     iRegistry.sPreModuleConstruction.watch  (this, &NuRandomService::preModuleConstruction  );
     iRegistry.sPostModuleConstruction.watch (this, &NuRandomService::postModuleConstruction );
@@ -53,32 +53,32 @@ namespace rndm {
     iRegistry.sPreModuleEndJob.watch        (this, &NuRandomService::preModuleEndJob        );
     iRegistry.sPostModuleEndJob.watch       (this, &NuRandomService::postModuleEndJob       );
     iRegistry.sPostEndJob.watch             (this, &NuRandomService::postEndJob             );
-    
+
   } // NuRandomService::NuRandomService()
-  
-  
-  
+
+
+
   //----------------------------------------------------------------------------
   NuRandomService::EngineId NuRandomService::qualify_engine_label
     (std::string moduleLabel, std::string instanceName) const
     { return { moduleLabel, instanceName }; }
-  
+
   NuRandomService::EngineId NuRandomService::qualify_engine_label
     (std::string instanceName /* = "" */) const
     { return qualify_engine_label( state.moduleLabel(), instanceName); }
-  
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::getSeed() {
     return getSeed(qualify_engine_label());
   } // NuRandomService::getSeed()
-  
-  
+
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::getSeed(std::string instanceName) {
     return getSeed(qualify_engine_label(instanceName));
   } // NuRandomService::getSeed(string)
-  
-  
+
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::getGlobalSeed(std::string instanceName) {
     EngineId ID(instanceName, EngineId::global);
@@ -86,15 +86,15 @@ namespace rndm {
       << "NuRandomService::getGlobalSeed(\"" << instanceName << "\")";
     return getSeed(ID);
   } // NuRandomService::getGlobalSeed()
-  
-  
+
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::getSeed(EngineId const& id) {
-    
+
     // We require an engine to have been registered before we yield seeds;
     // this should minimise unexpected conflicts.
     if (hasEngine(id)) return querySeed(id); // ask the seed to seed master
-    
+
     // if it hasn't been declared, we declare it now
     // (this is for backward compatibility with the previous behaviour).
     // registerEngineID() will eventually call this function again to get the
@@ -102,15 +102,15 @@ namespace rndm {
     // Also note that this effectively "freezes" the engine since no seeder
     // is specified.
     return registerEngineID(id);
-        
+
   } // NuRandomService::getSeed(EngineId)
-  
-  
+
+
   NuRandomService::seed_t NuRandomService::querySeed(EngineId const& id) {
     return seeds.getSeed(id); // ask the seed to seed master
   } // NuRandomService::querySeed()
-  
-  
+
+
   std::pair<NuRandomService::seed_t, bool> NuRandomService::findSeed(
     EngineId const& id,
     fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
@@ -118,24 +118,24 @@ namespace rndm {
     seed_t seed = InvalidSeed;
     // try and read the seed from configuration; if succeed, it's "frozen"
     bool const bFrozen = readSeedParameter(seed, pset, pnames);
-    
+
     // if we got a valid seed, use it as frozen
     if (bFrozen && (seed != InvalidSeed))
-      return { seed, true };  
-    
+      return { seed, true };
+
     // seed was not good enough; get the seed from the master
     return { querySeed(id), false };
-    
+
   } // NuRandomService::findSeed()
-  
-  
+
+
   NuRandomService::seed_t NuRandomService::registerEngine
     (SeedMaster_t::Seeder_t seeder, std::string instance /* = "" */)
   {
     return registerEngineID(qualify_engine_label(instance), seeder);
   } // NuRandomService::registerEngine(Seeder_t, string)
-  
-  
+
+
   NuRandomService::seed_t NuRandomService::registerEngine(
     SeedMaster_t::Seeder_t seeder, std::string instance,
     fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
@@ -148,28 +148,28 @@ namespace rndm {
     seed_t const seed = seedInfo.first;
     return seed;
   } // NuRandomService::registerEngine(Seeder_t, string, ParameterSet, init list)
-  
-    
+
+
   NuRandomService::seed_t NuRandomService::declareEngine(std::string instance) {
     return registerEngine(SeedMaster_t::Seeder_t(), instance);
   } // NuRandomService::declareEngine(string)
-  
-  
+
+
   NuRandomService::seed_t NuRandomService::declareEngine(
     std::string instance,
     fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
   ) {
     return registerEngine(SeedMaster_t::Seeder_t(), instance, pset, pnames);
   } // NuRandomService::declareEngine(string, ParameterSet, init list)
-  
-  
+
+
   NuRandomService::seed_t NuRandomService::defineEngine
     (SeedMaster_t::Seeder_t seeder, std::string instance /* = {} */)
   {
     return defineEngineID(qualify_engine_label(instance), seeder);
   } // NuRandomService::defineEngine(string, Seeder_t)
-  
-    
+
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::registerEngineID(
     EngineId const& id,
@@ -178,8 +178,8 @@ namespace rndm {
     prepareEngine(id, seeder);
     return seedEngine(id);
   } // NuRandomService::registerEngine()
-  
-  
+
+
   NuRandomService::seed_t NuRandomService::defineEngineID
     (EngineId const& id, SeedMaster_t::Seeder_t seeder)
   {
@@ -188,21 +188,21 @@ namespace rndm {
         << "Attempted to define engine '" << id.artName()
         << "', that was not declared\n";
     }
-    
+
     if (seeds.hasSeeder(id)) {
       throw art::Exception(art::errors::LogicError)
         << "Attempted to redefine engine '" << id.artName()
         << "', that has already been defined\n";
     }
-    
+
     ensureValidState();
-    
+
     seeds.registerSeeder(id, seeder);
     seed_t const seed = seedEngine(id);
     return seed;
   } // NuRandomService::defineEngineID()
-  
-  
+
+
   //----------------------------------------------------------------------------
   void NuRandomService::ensureValidState(bool bGlobal /* = false */) const {
     if (bGlobal) {
@@ -229,8 +229,8 @@ namespace rndm {
       }
     } // if
   } // NuRandomService::ensureValidState()
-  
-  
+
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::reseedInstance(EngineId const& id) {
     // get all the information on the current process, event and module from
@@ -247,26 +247,26 @@ namespace rndm {
     }
     return seed;
   } // NuRandomService::reseedInstance()
-  
-  
+
+
   void NuRandomService::reseedModule(std::string currentModule) {
     for (EngineId const& ID: seeds.engineIDsRange()) {
       if (ID.moduleLabel != currentModule) continue; // not our module? neeext!!
       reseedInstance(ID);
     } // for
   } // NuRandomService::reseedModule(string)
-  
+
   void NuRandomService::reseedModule() { reseedModule(state.moduleLabel()); }
-  
-  
+
+
   void NuRandomService::reseedGlobal() {
     for (EngineId const& ID: seeds.engineIDsRange()) {
       if (!ID.isGlobal()) continue; // not global? neeext!!
       reseedInstance(ID);
     } // for
   } // NuRandomService::reseedGlobal()
-  
-  
+
+
   //----------------------------------------------------------------------------
   void NuRandomService::RandomNumberGeneratorSeeder
     (EngineId const& id, seed_t seed)
@@ -278,16 +278,15 @@ namespace rndm {
                                                     id.moduleLabel,
                                                     id.instanceName);
     engine.setSeed(seed, 0); // the 0 is dummy... or so one hopes
-  } // NuRandomService::RandomNumberGeneratorSeeder()
-  
-  
+  }
+
   //----------------------------------------------------------------------------
   void NuRandomService::registerEngineAndSeeder
     (EngineId const& id, SeedMaster_t::Seeder_t seeder)
   {
     // Are we being called from the right place?
     ensureValidState(id.isGlobal());
-    
+
     if (hasEngine(id)) {
       throw art::Exception(art::errors::LogicError)
         << "NuRandomService: an engine with ID '" << id.artName()
@@ -295,13 +294,13 @@ namespace rndm {
     }
     seeds.registerNewSeeder(id, seeder);
   } // NuRandomService::registerEngineAndSeeder()
-  
-  
+
+
   //----------------------------------------------------------------------------
   void NuRandomService::freezeSeed(EngineId const& id, seed_t frozen_seed)
     { seeds.freezeSeed(id, frozen_seed); }
-  
-  
+
+
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::prepareEngine
     (EngineId const& id, SeedMaster_t::Seeder_t seeder)
@@ -309,8 +308,8 @@ namespace rndm {
     registerEngineAndSeeder(id, seeder);
     return querySeed(id);
   } // NuRandomService::prepareEngine()
-  
-  
+
+
   //----------------------------------------------------------------------------
   bool NuRandomService::readSeedParameter(
     seed_t& seed, fhicl::ParameterSet const& pset,
@@ -321,73 +320,73 @@ namespace rndm {
     seed = InvalidSeed;
     return false;
   } // NuRandomService::readSeedParameter()
-  
-  
+
+
   //----------------------------------------------------------------------------
   // Callbacks called by art.  Used to maintain information about state.
   void NuRandomService::preModuleConstruction(art::ModuleDescription const& md)  {
     state.transit_to(NuRandomServiceHelper::ArtState::inModuleConstructor);
     state.set_module(md);
   } // NuRandomService::preModuleConstruction()
-  
+
   void NuRandomService::postModuleConstruction(art::ModuleDescription const&) {
     state.reset_state();
   } // NuRandomService::postModuleConstruction()
-  
+
   void NuRandomService::preModuleBeginRun(art::ModuleContext const& mc) {
     state.transit_to(NuRandomServiceHelper::ArtState::inModuleBeginRun);
     state.set_module(mc.moduleDescription());
   } // NuRandomService::preModuleBeginRun()
-  
+
   void NuRandomService::postModuleBeginRun(art::ModuleContext const&) {
     state.reset_state();
   } // NuRandomService::postModuleBeginRun()
-  
+
   void NuRandomService::preProcessEvent(art::Event const& evt, art::ScheduleContext) {
     state.transit_to(NuRandomServiceHelper::ArtState::inEvent);
     state.set_event(evt);
     seeds.onNewEvent(); // inform the seed master that a new event has come
-    
+
     LOG_DEBUG("NuRandomService") << "preProcessEvent(): will reseed global engines";
     reseedGlobal(); // why don't we do them all?!?
-    
+
   } // NuRandomService::preProcessEvent()
-  
+
   void NuRandomService::preModule(art::ModuleContext const& mc) {
     state.transit_to(NuRandomServiceHelper::ArtState::inModuleEvent);
     state.set_module(mc.moduleDescription());
-    
+
     // Reseed all the engine of this module... maybe
     // (that is, if the current policy alows it).
     LOG_DEBUG("NuRandomService") << "preModule(): will reseed engines for module '"
       << mc.moduleLabel() << "'";
     reseedModule(mc.moduleLabel());
   } // NuRandomService::preModule()
-  
+
   void NuRandomService::postModule(art::ModuleContext const&) {
     state.reset_module();
     state.reset_state();
   } // NuRandomService::postModule()
-  
+
   void NuRandomService::postProcessEvent(art::Event const&, art::ScheduleContext) {
     state.reset_event();
     state.reset_state();
   } // NuRandomService::postProcessEvent()
-  
+
   void NuRandomService::preModuleEndJob(art::ModuleDescription const& md) {
     state.transit_to(NuRandomServiceHelper::ArtState::inEndJob);
     state.set_module(md);
   } // NuRandomService::preModuleBeginRun()
-  
+
   void NuRandomService::postModuleEndJob(art::ModuleDescription const&) {
     state.reset_state();
   } // NuRandomService::preModuleBeginRun()
-  
+
   void NuRandomService::postEndJob() {
     if ((verbosity > 0) || bPrintEndOfJobSummary)
       print(); // framework logger decides whether and where it shows up
   } // NuRandomService::postEndJob()
-  
+
   //----------------------------------------------------------------------------
 
 } // end namespace rndm

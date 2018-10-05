@@ -30,6 +30,7 @@
 
 // Framework includes.
 #include "canvas/Utilities/Exception.h"
+#include "cetlib/exempt_ptr.h"
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Core/detail/EngineCreator.h"
@@ -68,15 +69,11 @@ namespace testing {
     void analyze(const art::Event& event) override;
     
       private:
-    std::vector<std::string> instanceNames;
-    std::string externalInstanceName;
-    std::string standardInstanceName;
+    std::string moduleLabel;
     
-    std::unique_ptr<CLHEP::HepRandomEngine> extEngine;
-    CLHEP::HepRandomEngine* stdEngine;
-    
-    std::string moduleName() const;
-    
+    std::map<std::string, cet::exempt_ptr<CLHEP::HepRandomEngine>> engines;
+    std::unique_ptr<CLHEP::HepRandomEngine> extEngine{nullptr};
+    cet::exempt_ptr<CLHEP::HepRandomEngine> stdEngine{nullptr};
   }; // class RandomManagerTest
   
   
@@ -85,21 +82,19 @@ namespace testing {
   //--- RandomManagerTest implementation
   //---
   RandomManagerTest::RandomManagerTest(fhicl::ParameterSet const& pset):
-    art::EDAnalyzer(pset),
-    instanceNames(),
-    stdEngine(nullptr)
+    art::EDAnalyzer{pset},
+    moduleLabel{pset.get<std::string>("module_label")}
   {
-    
     art::ServiceHandle<rndm::NuRandomService> EngineManager;
     
     // check if we want an "external" engine
+    std::string externalInstanceName{};
     if (pset.get_if_present("externalInstance", externalInstanceName)) {
       mf::LogInfo("RandomManagerTest") << "Creating an unmanaged engine '"
-        << externalInstanceName << "' in module '" << moduleName() << "'";
-      extEngine.reset(new CLHEP::Ranlux64Engine);
+        << externalInstanceName << "' in module '" << moduleLabel << "'";
+      extEngine = std::make_unique<CLHEP::Ranlux64Engine>();
       
       EngineManager->registerEngine(
-      //  rndm::NuRandomService::CLHEPengineSeeder(extEngine.get()),
         [this](rndm::NuRandomService::EngineId const&, seed_t seed)
           { this->extEngine->setSeed(seed, 0); },
         externalInstanceName, pset, "Seed_" + externalInstanceName
@@ -107,9 +102,10 @@ namespace testing {
     } // if we have the external engine
     
     // check if we want an unmanaged standard engine
+    std::string standardInstanceName{};
     if (pset.get_if_present("standardInstance", standardInstanceName)) {
       mf::LogInfo("RandomManagerTest") << "Creating a standard engine '"
-        << standardInstanceName << "' in module '" << moduleName()
+        << standardInstanceName << "' in module '" << moduleLabel
         << "' with RandomNumberGenerator";
       seed_t seed
         = pset.get<unsigned int>("Seed_" + standardInstanceName, 0);
@@ -117,76 +113,59 @@ namespace testing {
     } // if we have the external engine
     
     // initialize the standard engines with RandomNumberGenerator
-    if (pset.get_if_present("instanceNames", instanceNames)) {
+    auto const instanceNames = pset.get<std::vector<std::string>>("instanceNames", {});
       for (std::string const& instanceName: instanceNames) {
         mf::LogInfo("RandomManagerTest") << "Creating a default engine '"
-          << instanceName << "' in module '" << moduleName() << "'";
-        EngineManager->createEngine
+                                       << instanceName << "' in module '" << moduleLabel << "'";
+      auto& engine = EngineManager->createEngine
           (*this, "HepJamesRandom", instanceName, pset, "Seed_" + instanceName);
-      } // for
+      engines.emplace(instanceName, &engine);
     }
     
     // create a default engine, if needed
     if (instanceNames.empty() && !extEngine && !stdEngine) {
-      instanceNames.emplace_back();
       mf::LogInfo("RandomManagerTest")
         << "Creating a nameless default engine in module '"
-        << moduleName() << "'";
-      EngineManager->createEngine(*this, pset, "Seed");
+        << moduleLabel << "'";
+      auto& engine = EngineManager->createEngine(*this, pset, "Seed");
+      engines.emplace("", &engine);
     }
     
     { // anonymous block
       mf::LogInfo log("RandomManagerTest");
-      log << "RandomManagerTest[" << moduleName() << "]: instances:";
+      log << "RandomManagerTest[" << moduleLabel << "]: instances:";
       for (std::string const& instanceName: instanceNames)
         log << " " << instanceName;
     } // anonymous block
     
-  } // RandomManagerTest::RandomManagerTest()
-  
-  
-  //----------------------------------------------------------------------------
-  void RandomManagerTest::analyze(const art::Event& event){
-    { // anonymous block
-      mf::LogVerbatim log("RandomManagerTest");
-      log << "RandomManagerTest[" << moduleName() << "]::analyze "
-          << event.id();
-    } // anonymous block
-    
-    // prepare a list of all the engines (including the external one)
-    art::ServiceHandle<art::RandomNumberGenerator> rng;
-    
-    std::vector<std::string> allInstances(instanceNames);
-    std::vector<CLHEP::HepRandomEngine*> allEngines;
-    for (std::string const& instanceName: instanceNames)
-      allEngines.push_back(&rng->getEngine(art::ScheduleID::first(), moduleName(), instanceName));
-    
+    // Add non-art-managed engines to list of engines
     if (extEngine) {
-      allInstances.push_back(externalInstanceName);
-      allEngines.push_back(extEngine.get());
+      assert(!externalInstanceName.empty());
+      engines.emplace(externalInstanceName, extEngine.get());
     }
     
     if (stdEngine) {
-      allInstances.push_back(standardInstanceName);
-      allEngines.push_back(stdEngine);
+      assert(!standardInstanceName.empty());
+      engines.emplace(standardInstanceName, stdEngine);
     }
     
-    for (size_t iEngine = 0; iEngine < allEngines.size(); ++iEngine) {
-      std::string const& instanceName = allInstances[iEngine];
-      CLHEP::HepRandomEngine& engine = *(allEngines[iEngine]);
+  } // RandomManagerTest::RandomManagerTest()
+
+
+  //----------------------------------------------------------------------------
+  void RandomManagerTest::analyze(const art::Event& event)
+  {
+    mf::LogVerbatim("RandomManagerTest") << "RandomManagerTest[" << moduleLabel << "]::analyze "
+                                         << event.id();
       
-      seed_t actualSeed = testing::NuRandomService::readSeed(engine);
+    for (auto& [instanceName, engine] : engines) {
+      seed_t actualSeed = testing::NuRandomService::readSeed(*engine);
       mf::LogVerbatim("RandomManagerTest")
         << std::setw(12) << (instanceName.empty()? "<default>": instanceName)
-        << ": " << testing::NuRandomService::CreateCharacter(engine)
+        << ": " << testing::NuRandomService::CreateCharacter(*engine)
         << "   (seed: " << actualSeed << ")";
-    } // for
-    
+    }
   } // RandomManagerTest::analyze()
-  
-  
-  inline std::string RandomManagerTest::moduleName() const
-    { return moduleDescription().moduleLabel(); }
   
   
 } // end namespace testing
