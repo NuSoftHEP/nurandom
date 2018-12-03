@@ -44,16 +44,18 @@
 
 // From art and its tool chain.
 #include "fhiclcpp/ParameterSet.h"
+#include "art/Framework/Core/detail/EngineCreator.h"
 #include "art/Framework/Services/Optional/RandomNumberGenerator.h"
 #include "art/Framework/Services/Registry/ServiceMacros.h"
+#include "art/Persistency/Provenance/ScheduleContext.h"
 
 // Forward declarations
 namespace art {
   class ActivityRegistry;
   class ModuleDescription;
+  class ModuleContext;
   class Run;
   class SubRun;
-  class EngineCreator;
 }
 
 namespace rndm {
@@ -359,7 +361,7 @@ namespace rndm {
    */
   class NuRandomService {
       public:
-    using seed_t = art::RandomNumberGenerator::seed_t;
+    using seed_t = art::detail::EngineCreator::seed_t;
     
     using SeedMaster_t = SeedMaster<seed_t>; ///< type of object providing seeds
     
@@ -460,7 +462,7 @@ namespace rndm {
      * The life time of the engine is managed by art::RandomNumberGenerator,
      * while the seeding is managed by this service.
      * 
-     * This is a replacement of art::EngineCreator-derived classes.
+     * This is a replacement of art::detail::EngineCreator-derived classes.
      * The use of createEngine() class of function is discouraged and this
      * function might be removed in the future, because of its non-clean use of
      * module interfaces.
@@ -506,9 +508,12 @@ namespace rndm {
      * an engine by RandomNumberGenerator service is private and open only
      * to friends.
      */
+    template <typename Module>
     seed_t createEngine
-      (art::EngineCreator& module, std::string type, std::string instance = "");
-    seed_t createEngine(art::EngineCreator& module);
+      (Module& module, std::string type, std::string instance = "");
+
+    template <typename Module>
+    seed_t createEngine(Module& module);
     //@}
     
     //@{
@@ -536,32 +541,43 @@ namespace rndm {
      * an engine by RandomNumberGenerator service is private and open only
      * to friends.
      */
+    template <typename Module>
     seed_t createEngine(
-      art::EngineCreator& module, std::string type, std::string instance,
+      Module& module, std::string type, std::string instance,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return createEngine(module, type, instance, pset, { pname }); }
+
+    template <typename Module>
     seed_t createEngine(
-      art::EngineCreator& module, std::string type, std::string instance,
+      Module& module, std::string type, std::string instance,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       );
+
+    template <typename Module>
     seed_t createEngine(
-      art::EngineCreator& module, std::string type,
+      Module& module, std::string type,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return createEngine(module, type, "", pset, pname); }
+
+    template <typename Module>
     seed_t createEngine(
-      art::EngineCreator& module, std::string type,
+      Module& module, std::string type,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       )
       { return createEngine(module, type, "", pset, pnames); }
+
+    template <typename Module>
     seed_t createEngine(
-      art::EngineCreator& module,
+      Module& module,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return createEngine(module, pset, { pname }); }
+
+    template <typename Module>
     seed_t createEngine(
-      art::EngineCreator& module,
+      Module& module,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       );
     //@}
@@ -957,12 +973,12 @@ namespace rndm {
     // Call backs that will be called by art.
     void preModuleConstruction (art::ModuleDescription const& md);
     void postModuleConstruction(art::ModuleDescription const&);
-    void preModuleBeginRun     (art::ModuleDescription const& md);
-    void postModuleBeginRun    (art::ModuleDescription const&);
-    void preProcessEvent       (art::Event const& evt);
-    void preModule             (art::ModuleDescription const& md);
-    void postModule            (art::ModuleDescription const&);
-    void postProcessEvent      (art::Event const&);
+    void preModuleBeginRun     (art::ModuleContext const& mc);
+    void postModuleBeginRun    (art::ModuleContext const&);
+    void preProcessEvent       (art::Event const& evt, art::ScheduleContext);
+    void preModule             (art::ModuleContext const& mc);
+    void postModule            (art::ModuleContext const&);
+    void postProcessEvent      (art::Event const&, art::ScheduleContext);
     void preModuleEndJob       (art::ModuleDescription const& md);
     void postModuleEndJob      (art::ModuleDescription const&);
     void postEndJob            ();
@@ -971,6 +987,65 @@ namespace rndm {
  }; // class NuRandomService
   
   
+  //----------------------------------------------------------------------------
+  template <typename Module>
+  NuRandomService::seed_t NuRandomService::createEngine(
+    Module& module, std::string type,
+    std::string instance /* = "" */
+  ) {
+    EngineId id = qualify_engine_label(instance);
+    const seed_t seed = prepareEngine(id, RandomNumberGeneratorSeeder);
+    module.createEngine(seed, type, instance);
+    mf::LogInfo("NuRandomService")
+      << "Seeding " << type << " engine \"" << id.artName()
+      << "\" with seed " << seed << ".";
+    return seed;
+  } // NuRandomService::createEngine(strings)
+
+  template <typename Module>
+  NuRandomService::seed_t NuRandomService::createEngine(Module& module) {
+    EngineId id = qualify_engine_label();
+    const seed_t seed = prepareEngine(id, RandomNumberGeneratorSeeder);
+    module.createEngine(seed);
+    mf::LogInfo("NuRandomService")
+      << "Seeding default-type engine \"" << id.artName()
+      << "\" with seed " << seed << ".";
+    return seed;
+  } // NuRandomService::createEngine()
+
+  template <typename Module>
+  NuRandomService::seed_t NuRandomService::createEngine(
+    Module& module, std::string type,
+    std::string instance,
+    fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
+  ) {
+    EngineId id = qualify_engine_label(instance);
+    registerEngineAndSeeder(id, RandomNumberGeneratorSeeder);
+    std::pair<seed_t, bool> seedInfo = findSeed(id, pset, pnames);
+    module.createEngine(seedInfo.first, type, instance);
+    mf::LogInfo("NuRandomService")
+      << "Seeding " << type << " engine \"" << id.artName()
+      << "\" with seed " << seedInfo.first << ".";
+    if (seedInfo.second) freezeSeed(id, seedInfo.first);
+    return seedInfo.first;
+  } // NuRandomService::createEngine(ParameterSet)
+
+
+  template <typename Module>
+  NuRandomService::seed_t NuRandomService::createEngine(
+    Module& module,
+    fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
+  ) {
+    EngineId id = qualify_engine_label();
+    registerEngineAndSeeder(id, RandomNumberGeneratorSeeder);
+    std::pair<seed_t, bool> seedInfo = findSeed(id, pset, pnames);
+    module.createEngine(seedInfo.first);
+    mf::LogInfo("NuRandomService")
+      << "Seeding default-type engine \"" << id.artName()
+      << "\" with seed " << seedInfo.first << ".";
+    if (seedInfo.second) freezeSeed(id, seedInfo.first);
+    return seedInfo.first;
+  } // NuRandomService::createEngine(ParameterSet)
   
 } // namespace rndm
 
