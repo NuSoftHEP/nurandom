@@ -222,7 +222,12 @@ else()
   cet_find_library( GPHNDCY      NAMES GPhNDcy      PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
   cet_find_library( GTLGEO       NAMES GTlGeo       PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
   cet_find_library( GTLFLX       NAMES GTlFlx       PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
-  cet_find_library( GTLREW       NAMES GTlRew       PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
+
+  # if GENIE's Reweight gets spun into separate product
+  # then the following must change for GENIE_LIB to ? GENIERW_LIB
+  cet_find_library( GRWFWK       NAMES GRwFwk       PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
+  cet_find_library( GRWIO        NAMES GRwIO        PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
+  cet_find_library( GRWCLC       NAMES GRwClc       PATHS ENV GENIE_LIB NO_DEFAULT_PATH )
 
   # GENIE pre-R-3 used GSL via ROOT's Math libs, now makes direct call not available via that route
   cet_find_library( GSL NAMES gsl PATHS ENV GSL_LIB NO_DEFAULT_PATH )
@@ -283,8 +288,11 @@ else()
                       ${GPHNDCY}
                       ${GTLGEO}
                       ${GTLFLX}
-                      ${GTLREW}
+                      ${GRWFWK}
+                      ${GRWIO}
+                      ${GRWCLC}
                       )
+
 endif()
 #MESSAGE("--NUTOOLS-- GENIE ${VMAJ} messenger ${GMESSENGER} gfwmsg ${GFWMSG} GENIE_LIB_LIST=${GENIE_LIB_LIST}")
 
@@ -309,6 +317,7 @@ include(CetRootCint)
 
 # include search path
 include_directories ( $ENV{GENIE_INC}/GENIE )
+include_directories ( $ENV{GENIE_REWEIGHT}/src )
 include_directories ( $ENV{LIBXML2_INC} )
 include_directories ( $ENV{G4INCLUDE} )
 include_directories ( $ENV{XERCES_C_INC} )
