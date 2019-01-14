@@ -208,7 +208,7 @@ namespace rndm {
       if (!id.instanceName.empty())
         s.append(" Instance: ").append(id.instanceName);
       seed_t seed = SeedFromHash(s);
-      LOG_DEBUG("PerEventPolicy") << "Seed from: '" << s << "': " << seed;
+      MF_LOG_DEBUG("PerEventPolicy") << "Seed from: '" << s << "': " << seed;
       return seed;
     } // PerEventPolicy<SEED>::EventTimestamp_v1()
     

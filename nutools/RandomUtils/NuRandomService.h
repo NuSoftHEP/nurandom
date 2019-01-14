@@ -861,7 +861,7 @@ namespace rndm {
       void operator() (EngineId const&, seed_t seed)
         {
           engine.setSeed(seed, 0);
-          LOG_DEBUG("CLHEPengineSeeder")
+          MF_LOG_DEBUG("CLHEPengineSeeder")
             << "CLHEP engine: '" << engine.name() << "'[" << ((void*) &engine)
             << "].setSeed(" << seed << ", 0)";
         }

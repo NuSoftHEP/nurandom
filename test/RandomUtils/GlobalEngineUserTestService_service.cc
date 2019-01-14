@@ -145,7 +145,7 @@ void testing::GlobalEngineUserTestService::preModuleConstruction
   (art::ModuleDescription const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::preModuleConstruction()";
      CheckAllSeeds();
    }
@@ -156,7 +156,7 @@ void testing::GlobalEngineUserTestService::postModuleConstruction
   (art::ModuleDescription const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::postModuleConstruction()";
      CheckAllSeeds();
    }
@@ -167,7 +167,7 @@ void testing::GlobalEngineUserTestService::preModuleBeginRun
   (art::ModuleContext const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::preModuleBeginRun()";
      CheckAllSeeds();
    }
@@ -178,7 +178,7 @@ void testing::GlobalEngineUserTestService::postModuleBeginRun
   (art::ModuleContext const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::postModuleBeginRun()";
      CheckAllSeeds();
    }
@@ -186,7 +186,7 @@ void testing::GlobalEngineUserTestService::postModuleBeginRun
 
      
 void testing::GlobalEngineUserTestService::preProcessEvent(art::Event const&, art::ScheduleContext) {
-   LOG_DEBUG("GlobalEngineUserTestService")
+   MF_LOG_DEBUG("GlobalEngineUserTestService")
      << "GlobalEngineUserTestService::preProcessEvent()";
    CheckAllSeeds();
 } // testing::GlobalEngineUserTestService::preProcessEvent()
@@ -195,7 +195,7 @@ void testing::GlobalEngineUserTestService::preProcessEvent(art::Event const&, ar
 void testing::GlobalEngineUserTestService::preModule
   (art::ModuleContext const&)
 {
-   LOG_DEBUG("GlobalEngineUserTestService")
+   MF_LOG_DEBUG("GlobalEngineUserTestService")
      << "GlobalEngineUserTestService::preModule()";
    CheckAllSeeds();
 } // testing::GlobalEngineUserTestService::preModule()
@@ -205,7 +205,7 @@ void testing::GlobalEngineUserTestService::postModule
   (art::ModuleContext const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::postModule()";
      CheckAllSeeds();
    }
@@ -213,7 +213,7 @@ void testing::GlobalEngineUserTestService::postModule
 
      
 void testing::GlobalEngineUserTestService::postProcessEvent(art::Event const&, art::ScheduleContext) {
-   LOG_DEBUG("GlobalEngineUserTestService")
+   MF_LOG_DEBUG("GlobalEngineUserTestService")
      << "GlobalEngineUserTestService::postProcessEvent()";
    CheckAllSeeds();
 } // testing::GlobalEngineUserTestService::postProcessEvent()
@@ -223,7 +223,7 @@ void testing::GlobalEngineUserTestService::preModuleEndJob
   (art::ModuleDescription const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::preModuleEndJob()";
      CheckAllSeeds();
    }
@@ -234,7 +234,7 @@ void testing::GlobalEngineUserTestService::postModuleEndJob
   (art::ModuleDescription const&)
 {
    if (!perEventSeeds) {
-     LOG_DEBUG("GlobalEngineUserTestService")
+     MF_LOG_DEBUG("GlobalEngineUserTestService")
        << "GlobalEngineUserTestService::postModuleEndJob()";
      CheckAllSeeds();
    }
