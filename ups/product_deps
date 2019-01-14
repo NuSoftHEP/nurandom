@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nutools  v2_26_02
+parent nutools  v2_26_03
 defaultqual     e17
 
 # These optional lines define the installed directories where
@@ -16,8 +16,8 @@ libdir      fq_dir      lib
 bindir      fq_dir      bin
 #
 product         version
-art             v3_00_00
-nusimdata       v1_15_00
+art             v3_01_00
+nusimdata       v1_15_01
 dk2nugenie      v01_07_02b
 geant4          v4_10_3_p03c
 cry             v1_7k
@@ -30,12 +30,12 @@ end_product_list
 # -nq- here means there is no qualifier
 # a - here means the dependent product is not required by the parent and will not be setup
 qualifier     nusimdata    art          dk2nugenie cry         geant4    ifdh_art           notes
-c2:debug      c2:debug     c2:debug     c2:debug   c2:debug    c2:debug  c2:s69:debug
-c2:prof       c2:prof      c2:prof      c2:prof    c2:prof     c2:prof   c2:s69:prof
-e17:debug     e17:debug    e17:debug    e17:debug  e17:debug   e17:debug e17:s69:debug
-e17:prof      e17:prof     e17:prof     e17:prof   e17:prof    e17:prof  e17:s69:prof
-e15:debug     e15:debug    e15:debug    e15:debug  e15:debug   e15:debug e15:s69:debug
-e15:prof      e15:prof     e15:prof     e15:prof   e15:prof    e15:prof  e15:s69:prof
+c2:debug      c2:debug     c2:debug     c2:debug   c2:debug    c2:debug  c2:s71:debug
+c2:prof       c2:prof      c2:prof      c2:prof    c2:prof     c2:prof   c2:s71:prof
+e17:debug     e17:debug    e17:debug    e17:debug  e17:debug   e17:debug e17:s71:debug
+e17:prof      e17:prof     e17:prof     e17:prof   e17:prof    e17:prof  e17:s71:prof
+e15:debug     e15:debug    e15:debug    e15:debug  e15:debug   e15:debug e15:s71:debug
+e15:prof      e15:prof     e15:prof     e15:prof   e15:prof    e15:prof  e15:s71:prof
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
