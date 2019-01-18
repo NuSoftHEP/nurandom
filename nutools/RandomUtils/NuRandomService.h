@@ -24,6 +24,7 @@
 
 
 // C/C++ standard libraries
+#include <functional>
 #include <string>
 #include <utility> // std::forward()
 #include <initializer_list>
@@ -511,11 +512,11 @@ namespace rndm {
      * to friends.
      */
     template <typename Module>
-    engine_t& createEngine
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine
       (Module& module, std::string type, std::string instance = "");
 
     template <typename Module>
-    engine_t& createEngine(Module& module);
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(Module& module);
     //@}
 
     //@{
@@ -544,41 +545,41 @@ namespace rndm {
      * to friends.
      */
     template <typename Module>
-    engine_t& createEngine(
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type, std::string instance,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return createEngine(module, type, instance, pset, { pname }); }
 
     template <typename Module>
-    engine_t& createEngine(
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type, std::string instance,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       );
 
     template <typename Module>
-    engine_t& createEngine(
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return createEngine(module, type, "", pset, pname); }
 
     template <typename Module>
-    engine_t& createEngine(
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       )
       { return createEngine(module, type, "", pset, pnames); }
 
     template <typename Module>
-    engine_t& createEngine(
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return createEngine(module, pset, { pname }); }
 
     template <typename Module>
-    engine_t& createEngine(
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       );
@@ -992,7 +993,7 @@ namespace rndm {
 #if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
   //----------------------------------------------------------------------------
   template <typename Module>
-  NuRandomService::engine_t&
+  std::reference_wrapper<NuRandomService::engine_t>
   NuRandomService::createEngine(Module& module,
                                 std::string type,
                                 std::string instance /* = "" */)
@@ -1006,7 +1007,7 @@ namespace rndm {
   } // NuRandomService::createEngine(strings)
 
   template <typename Module>
-  NuRandomService::engine_t&
+  std::reference_wrapper<NuRandomService::engine_t>
   NuRandomService::createEngine(Module& module)
   {
     EngineId id = qualify_engine_label();
@@ -1018,7 +1019,7 @@ namespace rndm {
   } // NuRandomService::createEngine()
 
   template <typename Module>
-  NuRandomService::engine_t&
+  std::reference_wrapper<NuRandomService::engine_t>
   NuRandomService::createEngine(Module& module,
                                 std::string type,
                                 std::string instance,
@@ -1037,7 +1038,7 @@ namespace rndm {
 
 
   template <typename Module>
-  NuRandomService::engine_t&
+  std::reference_wrapper<NuRandomService::engine_t>
   NuRandomService::createEngine(Module& module,
                                 fhicl::ParameterSet const& pset,
                                 std::initializer_list<std::string> pnames)
