@@ -64,7 +64,7 @@ namespace rndm {
         {
           state_type old_state = state();
           set_state(astate);
-          LOG_DEBUG("ArtState")
+          MF_LOG_DEBUG("ArtState")
             << "NuRandomService::ArtState: transition from "
             << stateName(old_state) << " to " << stateName();
           return old_state;

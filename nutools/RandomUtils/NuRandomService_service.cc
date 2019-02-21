@@ -82,7 +82,7 @@ namespace rndm {
   //----------------------------------------------------------------------------
   NuRandomService::seed_t NuRandomService::getGlobalSeed(std::string instanceName) {
     EngineId ID(instanceName, EngineId::global);
-    LOG_DEBUG("NuRandomService")
+    MF_LOG_DEBUG("NuRandomService")
       << "NuRandomService::getGlobalSeed(\"" << instanceName << "\")";
     return getSeed(ID);
   } // NuRandomService::getGlobalSeed()
@@ -347,7 +347,7 @@ namespace rndm {
     state.set_event(evt);
     seeds.onNewEvent(); // inform the seed master that a new event has come
 
-    LOG_DEBUG("NuRandomService") << "preProcessEvent(): will reseed global engines";
+    MF_LOG_DEBUG("NuRandomService") << "preProcessEvent(): will reseed global engines";
     reseedGlobal(); // why don't we do them all?!?
 
   } // NuRandomService::preProcessEvent()
@@ -358,7 +358,7 @@ namespace rndm {
 
     // Reseed all the engine of this module... maybe
     // (that is, if the current policy alows it).
-    LOG_DEBUG("NuRandomService") << "preModule(): will reseed engines for module '"
+    MF_LOG_DEBUG("NuRandomService") << "preModule(): will reseed engines for module '"
       << mc.moduleLabel() << "'";
     reseedModule(mc.moduleLabel());
   } // NuRandomService::preModule()
