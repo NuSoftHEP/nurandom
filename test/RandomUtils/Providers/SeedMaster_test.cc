@@ -204,7 +204,7 @@ int TestModule(SeedMaster_t& seeds, const fhicl::ParameterSet& pset) {
     mf::LogVerbatim("SeedMaster_test")
       << "Seed for '" << instance_name << "' is: " << seed;
     if (seed == 0) {
-      LOG_ERROR(module_id)
+      MF_LOG_ERROR(module_id)
         << "instance " << instance_name << " got seed 0!";
       if (++nErrors <= nExpectedErrors) {
         mf::LogProblem(module_id) << "  (error #" << nErrors
@@ -221,7 +221,7 @@ int TestModule(SeedMaster_t& seeds, const fhicl::ParameterSet& pset) {
     mf::LogVerbatim("SeedMaster_test")
       << "Seed for '" << instance_name << "' is: " << seed << " (second query)";
     if (seed != *iOldSeed) {
-      LOG_ERROR(module_id)
+      MF_LOG_ERROR(module_id)
         << "seed has changed for instance "
         << instance_name << ": " << *iOldSeed << " => " << seed;
       if (++nErrors <= nExpectedErrors) {
@@ -230,7 +230,7 @@ int TestModule(SeedMaster_t& seeds, const fhicl::ParameterSet& pset) {
       }
     } // if different from before
     if (*iOldSeed == 0) {
-      LOG_ERROR(module_id)
+      MF_LOG_ERROR(module_id)
         << "instance " << instance_name << " got seed 0!";
       if (++nErrors <= nExpectedErrors) {
         mf::LogProblem(module_id) << "  (error #" << nErrors
