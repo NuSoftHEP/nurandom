@@ -14,7 +14,6 @@
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/SubRun.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
-#include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Persistency/Provenance/ModuleContext.h"
 #include "art/Persistency/Provenance/ModuleDescription.h"
 #include "canvas/Persistency/Provenance/EventID.h"
@@ -266,19 +265,6 @@ namespace rndm {
     } // for
   } // NuRandomService::reseedGlobal()
 
-
-  //----------------------------------------------------------------------------
-  void NuRandomService::RandomNumberGeneratorSeeder
-    (EngineId const& id, seed_t seed)
-  {
-    // no check is performed to verify that the current module is the one
-    // specified in id.moduleLabel -- but that is required!
-    art::ServiceHandle<art::RandomNumberGenerator> rng;
-    CLHEP::HepRandomEngine& engine = rng->getEngine(art::ScheduleID::first(),
-                                                    id.moduleLabel,
-                                                    id.instanceName);
-    engine.setSeed(seed, 0); // the 0 is dummy... or so one hopes
-  }
 
   //----------------------------------------------------------------------------
   void NuRandomService::registerEngineAndSeeder
