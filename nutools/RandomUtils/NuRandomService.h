@@ -141,11 +141,10 @@ namespace rndm {
    *     auto const seed = Seeds.declareEngine(instanceName);
    *
    *     // now create the engine (for example, use art); seed will be set
-   *     createEngine(seed, "HepJamesRandom", instanceName);
+   *     auto& engine = createEngine(seed, "HepJamesRandom", instanceName);
    *
    *     // finally, complete the registration; seed will be set again
-   *     art::ServiceHandle<art::RandomNumberGenerator> RNG;
-   *     Seeds.defineEngine(RNG->getEngine(instanceName));
+   *     Seeds.defineEngine(engine);
    *
    * This is equivalent to the discouraged call
    *
@@ -480,11 +479,10 @@ namespace rndm {
      *     auto const seed = Seeds.declareEngine(instanceName);
      *
      *     // now create the engine (for example, use art); seed will be set
-     *     createEngine(seed, "HepJamesRandom", instanceName);
+     *     auto& engine = createEngine(seed, "HepJamesRandom", instanceName);
      *
      *     // finally, complete the registration; seed will be set again
-     *     art::ServiceHandle<art::RandomNumberGenerator> RNG;
-     *     Seeds.defineEngine(RNG->getEngine(instanceName));
+     *     Seeds.defineEngine(engine);
      *
      * This is equivalent to the discouraged call
      *
@@ -838,9 +836,6 @@ namespace rndm {
     /// Prints to the framework Info logger
     void print() const { print(mf::LogInfo("NuRandomService")); }
 
-    /// Seeder_t function setting the seed of an engine in RandomNumberGenerator
-    static void RandomNumberGeneratorSeeder(EngineId const& id, seed_t seed);
-
 #if (NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT)
     /// Seeder_t functor setting the seed of a ROOT TRandom engine (untested!)
     class TRandomSeeder {
@@ -992,6 +987,11 @@ namespace rndm {
 
 #if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
   //----------------------------------------------------------------------------
+  // FIXME: See if the engine preparation can be done similarly to how
+  //        it is described in the "Create and register an engine"
+  //        documentation above.
+
+  //----------------------------------------------------------------------------
   template <typename Module>
   std::reference_wrapper<NuRandomService::engine_t>
   NuRandomService::createEngine(Module& module,
@@ -999,11 +999,13 @@ namespace rndm {
                                 std::string instance /* = "" */)
   {
     EngineId id = qualify_engine_label(instance);
-    const seed_t seed = prepareEngine(id, RandomNumberGeneratorSeeder);
+    auto& engine = module.createEngine(0, type, instance);
+    const seed_t seed = prepareEngine(id, CLHEPengineSeeder{engine});
+    engine.setSeed(seed, 0);
     mf::LogInfo("NuRandomService")
       << "Seeding " << type << " engine \"" << id.artName()
       << "\" with seed " << seed << ".";
-    return module.createEngine(seed, type, instance);
+    return engine;
   } // NuRandomService::createEngine(strings)
 
   template <typename Module>
@@ -1011,11 +1013,13 @@ namespace rndm {
   NuRandomService::createEngine(Module& module)
   {
     EngineId id = qualify_engine_label();
-    const seed_t seed = prepareEngine(id, RandomNumberGeneratorSeeder);
+    auto& engine = module.createEngine(0);
+    const seed_t seed = prepareEngine(id, CLHEPengineSeeder{engine});
+    engine.setSeed(seed, 0);
     mf::LogInfo("NuRandomService")
       << "Seeding default-type engine \"" << id.artName()
       << "\" with seed " << seed << ".";
-    return module.createEngine(seed);
+    return engine;
   } // NuRandomService::createEngine()
 
   template <typename Module>
@@ -1027,13 +1031,15 @@ namespace rndm {
                                 std::initializer_list<std::string> pnames)
   {
     EngineId id = qualify_engine_label(instance);
-    registerEngineAndSeeder(id, RandomNumberGeneratorSeeder);
+    auto& engine = module.createEngine(0, type, instance);
+    registerEngineAndSeeder(id, CLHEPengineSeeder{engine});
     auto const [seed, frozen] = findSeed(id, pset, pnames);
+    engine.setSeed(seed, 0);
     mf::LogInfo("NuRandomService")
       << "Seeding " << type << " engine \"" << id.artName()
       << "\" with seed " << seed << ".";
     if (frozen) freezeSeed(id, seed);
-    return module.createEngine(seed, type, instance);
+    return engine;
   } // NuRandomService::createEngine(ParameterSet)
 
 
@@ -1044,13 +1050,15 @@ namespace rndm {
                                 std::initializer_list<std::string> pnames)
   {
     EngineId id = qualify_engine_label();
-    registerEngineAndSeeder(id, RandomNumberGeneratorSeeder);
+    auto& engine = module.createEngine(0);
+    registerEngineAndSeeder(id, CLHEPengineSeeder{engine});
     auto const [seed, frozen] = findSeed(id, pset, pnames);
+    engine.setSeed(seed, 0);
     mf::LogInfo("NuRandomService")
       << "Seeding default-type engine \"" << id.artName()
       << "\" with seed " << seed << ".";
     if (frozen) freezeSeed(id, seed);
-    return module.createEngine(seed);
+    return engine;
   } // NuRandomService::createEngine(ParameterSet)
 
 #endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
