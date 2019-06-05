@@ -9,13 +9,13 @@
  * Documentation is up to date though.
  */
 
-#ifndef NUTOOLS_RANDOMUTILS_PROVIDERS_POLICIES_H
-#define NUTOOLS_RANDOMUTILS_PROVIDERS_POLICIES_H 1
+#ifndef NURANDOM_RANDOMUTILS_PROVIDERS_POLICIES_H
+#define NURANDOM_RANDOMUTILS_PROVIDERS_POLICIES_H 1
 
 // including all the policy definitions:
-#include "nutools/RandomUtils/Providers/StandardPolicies.h"
-#include "nutools/RandomUtils/Providers/RandomPolicy.h"
-#include "nutools/RandomUtils/Providers/PerEventPolicy.h"
+#include "nurandom/RandomUtils/Providers/StandardPolicies.h"
+#include "nurandom/RandomUtils/Providers/RandomPolicy.h"
+#include "nurandom/RandomUtils/Providers/PerEventPolicy.h"
 
 
-#endif // NUTOOLS_RANDOMUTILS_PROVIDERS_POLICIES_H
+#endif // NURANDOM_RANDOMUTILS_PROVIDERS_POLICIES_H

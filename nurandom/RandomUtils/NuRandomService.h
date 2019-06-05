@@ -8,19 +8,19 @@
  */
 
 
-#ifndef NUTOOLS_RANDOMUTILS_NuRandomService_H
-#define NUTOOLS_RANDOMUTILS_NuRandomService_H 1
+#ifndef NURANDOM_RANDOMUTILS_NuRandomService_H
+#define NURANDOM_RANDOMUTILS_NuRandomService_H 1
 
-#ifndef NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#ifndef NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 /// Define to zero to exclude special CLHEP random engine support
-#  define NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP 1
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#  define NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP 1
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 
 // ROOT libraries
-#ifndef NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT
+#ifndef NURANDOM_RANDOMUTILS_NuRandomService_USEROOT
 /// Define to non-zero to include special ROOT random generator support
-#  define NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT 0
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT
+#  define NURANDOM_RANDOMUTILS_NuRandomService_USEROOT 0
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USEROOT
 
 
 // C/C++ standard libraries
@@ -30,18 +30,18 @@
 #include <initializer_list>
 
 // Some helper classes.
-#include "nutools/RandomUtils/ArtState.h"
-#include "nutools/RandomUtils/Providers/SeedMaster.h"
+#include "nurandom/RandomUtils/ArtState.h"
+#include "nurandom/RandomUtils/Providers/SeedMaster.h"
 
 // CLHEP libraries
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
 #  include "CLHEP/Random/RandomEngine.h"
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 
 // ROOT libraries
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USEROOT)
 #  include "TRandom.h"
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USEROOT
 
 // From art and its tool chain.
 #include "fhiclcpp/ParameterSet.h"
@@ -456,7 +456,7 @@ namespace rndm {
       { return seeds.getCurrentSeed(qualify_global_engine(instanceName)); }
 
 
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
     /// @{
     /**
      * @name Create and register an engine
@@ -584,7 +584,7 @@ namespace rndm {
     //@}
 
     /// @}
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 
     /// @{
     /// @name Register an existing engine
@@ -666,7 +666,7 @@ namespace rndm {
       { return registerEngine(seeder, "", pset, pnames); }
     //@}
 
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
     /**
      * @brief Registers an existing CLHEP engine with NuRandomService
      * @param engine a reference to the CLHEP random generator engine
@@ -692,7 +692,7 @@ namespace rndm {
         return registerEngine
           (CLHEPengineSeeder(engine), instance, pset, pnames);
       }
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
     /// @}
 
 
@@ -809,7 +809,7 @@ namespace rndm {
     seed_t defineEngine
       (SeedMaster_t::Seeder_t seeder, std::string instance = {});
 
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
     /**
      * @brief Defines a seeder for a previously declared engine
      * @param instance name of engine instance
@@ -824,7 +824,7 @@ namespace rndm {
     seed_t defineEngine
       (CLHEP::HepRandomEngine& engine, std::string instance = {})
       { return defineEngine(CLHEPengineSeeder(engine), instance); }
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
     /// @}
 
 
@@ -836,7 +836,7 @@ namespace rndm {
     /// Prints to the framework Info logger
     void print() const { print(mf::LogInfo("NuRandomService")); }
 
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USEROOT)
     /// Seeder_t functor setting the seed of a ROOT TRandom engine (untested!)
     class TRandomSeeder {
         public:
@@ -846,9 +846,9 @@ namespace rndm {
         protected:
       TRandom* pRandom = nullptr;
     }; // class TRandomSeeder
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USEROOT
 
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
     /// Seeder_t functor setting the seed of a CLHEP::HepRandomEngine engine (untested!)
     class CLHEPengineSeeder {
         public:
@@ -864,7 +864,7 @@ namespace rndm {
         protected:
       CLHEP::HepRandomEngine& engine;
     }; // class CLHEPengineSeeder
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 
   private:
 
@@ -985,7 +985,7 @@ namespace rndm {
  }; // class NuRandomService
 
 
-#if (NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP)
+#if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
   //----------------------------------------------------------------------------
   // FIXME: See if the engine preparation can be done similarly to how
   //        it is described in the "Create and register an engine"
@@ -1061,10 +1061,10 @@ namespace rndm {
     return engine;
   } // NuRandomService::createEngine(ParameterSet)
 
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 
 } // namespace rndm
 
 DECLARE_ART_SERVICE(rndm::NuRandomService, LEGACY)
 
-#endif // NUTOOLS_RANDOMUTILS_NuRandomService_H
+#endif // NURANDOM_RANDOMUTILS_NuRandomService_H

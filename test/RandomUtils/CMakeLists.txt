@@ -3,7 +3,7 @@ add_subdirectory(Providers)
 art_make(
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
   LIB_LIBRARIES 
-    nutools_RandomUtils_NuRandomService_service
+    nurandom_RandomUtils_NuRandomService_service
     ${ART_FRAMEWORK_CORE}
     ${ART_FRAMEWORK_UTILITIES}
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
@@ -14,8 +14,8 @@ art_make(
     cetlib_except
     ${CLHEP}
   MODULE_LIBRARIES
-    nutools_test_RandomUtils
-    nutools_RandomUtils_NuRandomService_service
+    nurandom_test_RandomUtils
+    nurandom_RandomUtils_NuRandomService_service
     ${ART_FRAMEWORK_CORE}
     ${ART_FRAMEWORK_PRINCIPAL}
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
@@ -27,7 +27,7 @@ art_make(
     cetlib_except
     ${CLHEP}
   SERVICE_LIBRARIES
-    nutools_RandomUtils_NuRandomService_service
+    nurandom_RandomUtils_NuRandomService_service
     art_Utilities
     canvas
     ${ART_FRAMEWORK_SERVICES_REGISTRY}

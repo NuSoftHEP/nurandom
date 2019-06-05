@@ -14,8 +14,17 @@ art_make(
     cetlib
     cetlib_except
     ${ROOT_CORE}
+  PLUGIN_LIBRARIES
+    art_Framework_Core
+    art_Persistency_Provenance
+    canvas
+    MF_MessageLogger
+    fhiclcpp
+    cetlib
+    cetlib_except
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
 )
-
 
 install_source()
 install_headers()

@@ -49,7 +49,7 @@
 #include "canvas/Utilities/Exception.h"
 
 // art extensions
-#include "nutools/RandomUtils/Providers/SeedMaster.h"
+#include "nurandom/RandomUtils/Providers/SeedMaster.h"
 
 
 //------------------------------------------------------------------------------

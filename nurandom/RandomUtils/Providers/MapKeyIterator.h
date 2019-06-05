@@ -6,8 +6,8 @@
  *
  * The classes provided here are templates.
  */
-#ifndef NUTOOLS_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H
-#define NUTOOLS_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H 1
+#ifndef NURANDOM_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H
+#define NURANDOM_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H 1
 
 // C++ standard libraries
 #include <iterator>
@@ -125,4 +125,4 @@ namespace rndm {
   } // namespace NuRandomServiceHelper
 } // namespace rndm
 
-#endif // NUTOOLS_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H
+#endif // NURANDOM_RANDOMUTILS_PROVIDERS_MAPKEYITERATOR_H
