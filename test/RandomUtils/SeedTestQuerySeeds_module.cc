@@ -7,7 +7,7 @@
 
 
 // art extensions
-#include "nutools/RandomUtils/NuRandomService.h"
+#include "nurandom/RandomUtils/NuRandomService.h"
 
 // Supporting library include files
 #include "messagefacility/MessageLogger/MessageLogger.h"

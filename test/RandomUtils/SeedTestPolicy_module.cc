@@ -8,9 +8,9 @@
 // test library
 #include "SeedTestUtils.h"
 
-// nutools libraries
-#define NUTOOLS_RANDOMUTILS_NuRandomService_USECLHEP 1
-#include "nutools/RandomUtils/NuRandomService.h"
+// nurandom libraries
+#define NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP 1
+#include "nurandom/RandomUtils/NuRandomService.h"
 
 // framework
 #include "canvas/Utilities/Exception.h"

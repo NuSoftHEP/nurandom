@@ -11,8 +11,8 @@
 
 
 // NuRandomService
-#define NUTOOLS_RANDOMUTILS_NuRandomService_USEROOT 1 // get testing::TRandomSeeder (it's a test...)
-#include "nutools/RandomUtils/NuRandomService.h"
+#define NURANDOM_RANDOMUTILS_NuRandomService_USEROOT 1 // get testing::TRandomSeeder (it's a test...)
+#include "nurandom/RandomUtils/NuRandomService.h"
 
 // From art and its tool chain.
 #include "fhiclcpp/ParameterSet.h"

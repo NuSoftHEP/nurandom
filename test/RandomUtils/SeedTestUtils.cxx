@@ -10,7 +10,7 @@
 #include "SeedTestUtils.h"
 
 // art extensions
-#include "nutools/RandomUtils/NuRandomService.h"
+#include "nurandom/RandomUtils/NuRandomService.h"
 
 // C++ includes.
 #include <string>

@@ -7,8 +7,8 @@
 
 
 // art extensions
-#define NUTOOLS_RANDOMUTILS_NURANDOMSERVICE_USECLHEP 1 // to have NuSeedService.h define CLHEPengineSeeder
-#include "nutools/RandomUtils/NuRandomService.h"
+#define NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP 1 // to have NuSeedService.h define CLHEPengineSeeder
+#include "nurandom/RandomUtils/NuRandomService.h"
 
 #include "test/RandomUtils/SeedTestUtils.h"
 

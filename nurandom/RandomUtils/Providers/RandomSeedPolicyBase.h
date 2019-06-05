@@ -11,8 +11,8 @@
  * Also a few additional feature extensions are implemented here.
  */
 
-#ifndef NUTOOLS_RANDOMUTILS_PROVIDERS_RANDOMSEEDPOLICYBASE_H
-#define NUTOOLS_RANDOMUTILS_PROVIDERS_RANDOMSEEDPOLICYBASE_H 1
+#ifndef NURANDOM_RANDOMUTILS_PROVIDERS_RANDOMSEEDPOLICYBASE_H
+#define NURANDOM_RANDOMUTILS_PROVIDERS_RANDOMSEEDPOLICYBASE_H 1
 
 // C/C++ standard libraries
 #include <vector>
@@ -31,8 +31,8 @@
 #include "canvas/Utilities/Exception.h"
 
 // Some helper classes
-#include "nutools/RandomUtils/Providers/EngineId.h"
-#include "nutools/RandomUtils/Providers/EventSeedInputData.h"
+#include "nurandom/RandomUtils/Providers/EngineId.h"
+#include "nurandom/RandomUtils/Providers/EventSeedInputData.h"
 
 
 namespace rndm {
@@ -520,4 +520,4 @@ namespace rndm {
 } // namespace rndm
 
 
-#endif // NUTOOLS_RANDOMUTILS_PROVIDERS_RANDOMSEEDPOLICYBASE_H
+#endif // NURANDOM_RANDOMUTILS_PROVIDERS_RANDOMSEEDPOLICYBASE_H

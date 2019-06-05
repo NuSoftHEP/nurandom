@@ -9,8 +9,8 @@
  * Documentation is up to date though.
  */
 
-#ifndef NUTOOLS_RANDOMUTILS_PROVIDERS_PEREVENTPOLICY_H
-#define NUTOOLS_RANDOMUTILS_PROVIDERS_PEREVENTPOLICY_H 1
+#ifndef NURANDOM_RANDOMUTILS_PROVIDERS_PEREVENTPOLICY_H
+#define NURANDOM_RANDOMUTILS_PROVIDERS_PEREVENTPOLICY_H 1
 
 // C/C++ standard libraries
 #include <string>
@@ -24,9 +24,9 @@
 #include "canvas/Utilities/Exception.h"
 
 // Some helper classes
-#include "nutools/RandomUtils/Providers/RandomSeedPolicyBase.h"
-#include "nutools/RandomUtils/Providers/EngineId.h"
-#include "nutools/RandomUtils/Providers/EventSeedInputData.h"
+#include "nurandom/RandomUtils/Providers/RandomSeedPolicyBase.h"
+#include "nurandom/RandomUtils/Providers/EngineId.h"
+#include "nurandom/RandomUtils/Providers/EventSeedInputData.h"
 
 
 namespace rndm {
@@ -281,4 +281,4 @@ namespace rndm {
 } // namespace rndm
 
 
-#endif // NUTOOLS_RANDOMUTILS_PROVIDERS_PEREVENTPOLICY_H
+#endif // NURANDOM_RANDOMUTILS_PROVIDERS_PEREVENTPOLICY_H

@@ -6,8 +6,8 @@
  * @see    NuRandomService.h SeedMaster.cc
  */
 
-#ifndef NUTOOLS_RANDOMUTILS_PROVIDERS_SEEDMASTER_H
-#define NUTOOLS_RANDOMUTILS_PROVIDERS_SEEDMASTER_H 1
+#ifndef NURANDOM_RANDOMUTILS_PROVIDERS_SEEDMASTER_H
+#define NURANDOM_RANDOMUTILS_PROVIDERS_SEEDMASTER_H 1
 
 // C/C++ standard libraries
 #include <vector>
@@ -21,10 +21,10 @@
 #include "canvas/Utilities/Exception.h"
 
 // Some helper classes
-#include "nutools/RandomUtils/Providers/MapKeyIterator.h"
-#include "nutools/RandomUtils/Providers/EngineId.h"
-#include "nutools/RandomUtils/Providers/Policies.h"
-#include "nutools/RandomUtils/Providers/EventSeedInputData.h"
+#include "nurandom/RandomUtils/Providers/MapKeyIterator.h"
+#include "nurandom/RandomUtils/Providers/EngineId.h"
+#include "nurandom/RandomUtils/Providers/Policies.h"
+#include "nurandom/RandomUtils/Providers/EventSeedInputData.h"
 
 // more headers included in the implementation section below
 
@@ -774,4 +774,4 @@ void rndm::SeedMaster<SEED>::ensureUnique
 } // SeedMaster<SEED>::ensureUnique()
 
 
-#endif // NUTOOLS_RANDOMUTILS_PROVIDERS_SEEDMASTER_H
+#endif // NURANDOM_RANDOMUTILS_PROVIDERS_SEEDMASTER_H

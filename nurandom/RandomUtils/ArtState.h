@@ -4,11 +4,11 @@
  * @author Rob Kutschke (kutschke@fnal.gov)
  */
 
-#ifndef NUTOOLS_RANDOMUTILS_ARTSTATE_H
-#define NUTOOLS_RANDOMUTILS_ARTSTATE_H 1
+#ifndef NURANDOM_RANDOMUTILS_ARTSTATE_H
+#define NURANDOM_RANDOMUTILS_ARTSTATE_H 1
 
 // NuRandomService libraries
-#include "nutools/RandomUtils/Providers/EventSeedInputData.h"
+#include "nurandom/RandomUtils/Providers/EventSeedInputData.h"
 
 // framework libraries
 #include "canvas/Utilities/Exception.h"
@@ -176,4 +176,4 @@ namespace rndm {
 
 } // namespace rndm
 
-#endif // NUTOOLS_RANDOMUTILS_ARTSTATE_H
+#endif // NURANDOM_RANDOMUTILS_ARTSTATE_H

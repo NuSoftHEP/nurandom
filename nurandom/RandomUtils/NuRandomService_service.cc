@@ -6,7 +6,7 @@
  */
 
 // NuRandomService header
-#include "nutools/RandomUtils/NuRandomService.h"
+#include "nurandom/RandomUtils/NuRandomService.h"
 
 // Art include files
 #include "canvas/Utilities/Exception.h"
