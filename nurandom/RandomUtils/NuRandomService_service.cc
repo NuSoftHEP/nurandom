@@ -2,7 +2,8 @@
  * @file NuRandomService_service.cc
  * @brief Assists in the distribution of guaranteed unique seeds to all engines within a job.
  * @author Rob Kutschke (kutschke@fnal.gov)
- * @see NuRandomService.h SeedMaster.h
+ * @see `nurandom/RandomUtils/NuRandomService.h`
+ *      `nurandom/RandomUtils/Providers/SeedMaster.h`
  */
 
 // NuRandomService header
@@ -67,19 +68,21 @@ namespace rndm {
     { return qualify_engine_label( state.moduleLabel(), instanceName); }
 
   //----------------------------------------------------------------------------
-  NuRandomService::seed_t NuRandomService::getSeed() {
-    return getSeed(qualify_engine_label());
-  } // NuRandomService::getSeed()
-
-
-  //----------------------------------------------------------------------------
-  NuRandomService::seed_t NuRandomService::getSeed(std::string instanceName) {
+  auto NuRandomService::getSeed
+    (std::string instanceName /* = "" */) -> seed_t
+  {
     return getSeed(qualify_engine_label(instanceName));
   } // NuRandomService::getSeed(string)
 
 
   //----------------------------------------------------------------------------
-  NuRandomService::seed_t NuRandomService::getGlobalSeed(std::string instanceName) {
+  auto NuRandomService::getSeed
+    (std::string const& moduleLabel, std::string const& instanceName) -> seed_t
+    { return getSeed(qualify_engine_label(moduleLabel, instanceName)); }
+
+
+  //----------------------------------------------------------------------------
+  auto NuRandomService::getGlobalSeed(std::string instanceName) -> seed_t {
     EngineId ID(instanceName, EngineId::global);
     MF_LOG_DEBUG("NuRandomService")
       << "NuRandomService::getGlobalSeed(\"" << instanceName << "\")";
@@ -110,21 +113,23 @@ namespace rndm {
   } // NuRandomService::querySeed()
 
 
+  auto NuRandomService::extractSeed
+    (EngineId const& id, std::optional<seed_t> seed) -> std::pair<seed_t, bool>
+  {
+    // if we got a valid seed, use it as frozen
+    if (seed && (seed.value() != InvalidSeed))
+      return { seed.value(), true };
+
+    // seed was not good enough; get the seed from the master
+    return { querySeed(id), false };
+  } // NuRandomService::extractSeed()
+
+
   std::pair<NuRandomService::seed_t, bool> NuRandomService::findSeed(
     EngineId const& id,
     fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
   ) {
-    seed_t seed = InvalidSeed;
-    // try and read the seed from configuration; if succeed, it's "frozen"
-    bool const bFrozen = readSeedParameter(seed, pset, pnames);
-
-    // if we got a valid seed, use it as frozen
-    if (bFrozen && (seed != InvalidSeed))
-      return { seed, true };
-
-    // seed was not good enough; get the seed from the master
-    return { querySeed(id), false };
-
+    return extractSeed(id, readSeedParameter(pset, pnames));
   } // NuRandomService::findSeed()
 
 
@@ -297,15 +302,24 @@ namespace rndm {
 
 
   //----------------------------------------------------------------------------
-  bool NuRandomService::readSeedParameter(
-    seed_t& seed, fhicl::ParameterSet const& pset,
+  std::optional<seed_t> NuRandomService::readSeedParameter(
+    fhicl::ParameterSet const& pset,
     std::initializer_list<std::string> pnames
   ) {
+    seed_t seed;
     for (std::string const& key: pnames)
-      if (pset.get_if_present(key, seed)) return true;
-    seed = InvalidSeed;
-    return false;
-  } // NuRandomService::readSeedParameter()
+      if (pset.get_if_present(key, seed)) return { seed };
+    return std::nullopt;
+  } // NuRandomService::readSeedParameter(ParameterSet, strings)
+
+
+  //----------------------------------------------------------------------------
+  std::optional<seed_t> NuRandomService::readSeedParameter
+    (SeedAtom const& param)
+  {
+    seed_t seed;
+    return param(seed)? std::make_optional(seed): std::nullopt;
+  } // NuRandomService::readSeedParameter(SeedAtom)
 
 
   //----------------------------------------------------------------------------

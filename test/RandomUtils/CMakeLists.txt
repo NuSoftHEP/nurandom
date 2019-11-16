@@ -153,6 +153,8 @@ endforeach( ServiceTestName )
 # The second batch of tests is for NuRandomService ("integration" tests for art service only)
 set( SuccessfulServiceOnlyTests
   PerEvent01
+  ValidatedConfigLinear
+  ValidatedConfigPerEvent
   )
 foreach( ServiceTestName ${SuccessfulServiceOnlyTests} )
   cet_test( test${ServiceTestName} HANDBUILT

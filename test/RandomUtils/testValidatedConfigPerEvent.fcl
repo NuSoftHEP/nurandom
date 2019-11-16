@@ -1,0 +1,52 @@
+# Test initialization of random engines with validated configuration.
+#
+# Policy:       perEvent
+# Valid:        yes
+# Will succeed: yes
+# Purpose:      validated configuration
+#
+
+#include "messageService.fcl"
+
+process_name : SeedTestValidated
+
+source: {
+  module_type:     EmptyEvent
+  timestampPlugin: { plugin_type: "GeneratedEventTimestamp" }
+  maxEvents:       2
+} # source
+
+services :
+{
+  message : @local::mf_interactive
+  RandomNumberGenerator: {}
+
+  NuRandomService: {
+    policy            : "perEvent"
+    verbosity         :     2
+    endOfJobSummary   :  true
+  } # NuRandomService
+  
+}
+
+
+physics: {
+  analyzers: {
+    validatedTest: {
+      
+      module_type   : ValidatedConfigSeedTest
+      
+      # this seed is frozen
+      SeedOne: 24
+      
+      # this seed is not frozen
+      # SeedTwo: 29
+      
+      
+    } # validatedTest
+  } # analyzers
+  
+  tests    : [ validatedTest ]
+  end_paths: [ tests ]
+  
+} # physics
