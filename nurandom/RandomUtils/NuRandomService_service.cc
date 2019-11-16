@@ -125,32 +125,34 @@ namespace rndm {
   } // NuRandomService::extractSeed()
 
 
-  std::pair<NuRandomService::seed_t, bool> NuRandomService::findSeed(
-    EngineId const& id,
-    fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
+  NuRandomService::seed_t NuRandomService::registerEngine(
+    SeedMaster_t::Seeder_t seeder, std::string const instance /* = "" */,
+    std::optional<seed_t> const seed /* = std::nullopt */
   ) {
-    return extractSeed(id, readSeedParameter(pset, pnames));
-  } // NuRandomService::findSeed()
-
-
-  NuRandomService::seed_t NuRandomService::registerEngine
-    (SeedMaster_t::Seeder_t seeder, std::string instance /* = "" */)
-  {
-    return registerEngineID(qualify_engine_label(instance), seeder);
-  } // NuRandomService::registerEngine(Seeder_t, string)
+    EngineId id = qualify_engine_label(instance);
+    registerEngineAndSeeder(id, seeder);
+    auto const [ seedValue, frozen ] = extractSeed(id, seed);
+    seedEngine(id); // seed it before freezing
+    if (frozen) freezeSeed(id, seedValue);
+    return seedValue;
+  } // NuRandomService::registerEngine(Seeder_t, string, ParameterSet, init list)
 
 
   NuRandomService::seed_t NuRandomService::registerEngine(
     SeedMaster_t::Seeder_t seeder, std::string instance,
     fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
-  ) {
-    EngineId id = qualify_engine_label(instance);
-    registerEngineAndSeeder(id, seeder);
-    std::pair<seed_t, bool> seedInfo = findSeed(id, pset, pnames);
-    seedEngine(id); // seed it before freezing
-    if (seedInfo.second) freezeSeed(id, seedInfo.first);
-    seed_t const seed = seedInfo.first;
-    return seed;
+    )
+  {
+    return registerEngine(seeder, instance, readSeedParameter(pset, pnames));
+  } // NuRandomService::registerEngine(Seeder_t, string, ParameterSet, init list)
+
+
+  NuRandomService::seed_t NuRandomService::registerEngine(
+    SeedMaster_t::Seeder_t seeder, std::string instance,
+    SeedAtom const& seedParam
+    )
+  {
+    return registerEngine(seeder, instance, readSeedParameter(seedParam));
   } // NuRandomService::registerEngine(Seeder_t, string, ParameterSet, init list)
 
 
@@ -181,7 +183,7 @@ namespace rndm {
   ) {
     prepareEngine(id, seeder);
     return seedEngine(id);
-  } // NuRandomService::registerEngine()
+  } // NuRandomService::registerEngineID()
 
 
   NuRandomService::seed_t NuRandomService::defineEngineID
