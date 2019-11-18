@@ -31,33 +31,33 @@ namespace testing { class ValidatedConfigSeedTest; }
 
 /**
  * @brief Test module for `rndm::NuRandomService`.
- * 
+ *
  * The test tries to set seeds for engines from validated configuration.
  * It initializes three random generator engines, the seed of two of which can
  * be controlled via configuration (including validation).
  * The seed of the third engine is fully under `rndm::NuRandomService` control.
- * 
- * 
+ *
+ *
  * Configuration parameters
  * -------------------------
- * 
+ *
  * * **SeedOne**: seed for random engine `"one"`
  * * **SeedTwo**: seed for random engine `"two"`
- * 
+ *
  */
 class testing::ValidatedConfigSeedTest: public art::EDAnalyzer {
-  
+
   CLHEP::HepRandomEngine& fEngineOne; ///< Random engine "one".
   CLHEP::HepRandomEngine& fEngineTwo; ///< Random engine "two".
   CLHEP::HepRandomEngine& fEngineThree; ///< Random engine "three".
-  
+
     public:
-  
+
   struct Config {
-    
+
     using Name = fhicl::Name;
     using Comment = fhicl::Comment;
-    
+
     rndm::SeedAtom SeedOne{
       Name("SeedOne"),
       Comment("optional seed for engine \"one\"")
@@ -66,15 +66,15 @@ class testing::ValidatedConfigSeedTest: public art::EDAnalyzer {
       Name("SeedTwo"),
       Comment("optional seed for engine \"two\"")
       };
-    
+
   }; // struct Config
-  
+
   using Parameters = art::EDAnalyzer::Table<Config>;
-  
+
   explicit ValidatedConfigSeedTest(Parameters const& config);
 
   virtual void analyze(art::Event const&) override {}
-  
+
 }; // class testing::ValidatedConfigSeedTest
 
 
@@ -89,12 +89,12 @@ testing::ValidatedConfigSeedTest::ValidatedConfigSeedTest
   , fEngineThree(art::ServiceHandle<rndm::NuRandomService>()->createEngine
       (*this, "HepJamesRandom", "three"))
 {
-  
+
   auto const& randomService = *(art::ServiceHandle<rndm::NuRandomService>());
-  
+
   rndm::NuRandomService::seed_t seed, expectedSeed;
   std::string engineName;
-  
+
   engineName = "one";
   seed = randomService.getCurrentSeed(engineName);
   if (config().SeedOne(expectedSeed)) {
@@ -106,7 +106,7 @@ testing::ValidatedConfigSeedTest::ValidatedConfigSeedTest
   }
   mf::LogVerbatim("ValidatedConfigSeedTest")
     << "Engine '" << engineName << "' seeded with " << seed;
-  
+
   engineName = "two";
   seed = randomService.getCurrentSeed(engineName);
   if (config().SeedTwo(expectedSeed)) {
@@ -118,12 +118,12 @@ testing::ValidatedConfigSeedTest::ValidatedConfigSeedTest
   }
   mf::LogVerbatim("ValidatedConfigSeedTest")
     << "Engine '" << engineName << "' seeded with " << seed;
-  
+
   engineName = "three";
   seed = randomService.getCurrentSeed(engineName);
   mf::LogVerbatim("ValidatedConfigSeedTest")
     << "Engine '" << engineName << "' seeded with " << seed;
-  
+
 } // testing::ValidatedConfigSeedTest::ValidatedConfigSeedTest()
 
 

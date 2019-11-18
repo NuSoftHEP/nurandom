@@ -2,7 +2,7 @@ add_subdirectory(Providers)
 
 art_make(
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
-  LIB_LIBRARIES 
+  LIB_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
     ${ART_FRAMEWORK_CORE}
     ${ART_FRAMEWORK_UTILITIES}
