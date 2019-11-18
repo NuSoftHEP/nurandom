@@ -26,27 +26,27 @@ services :
     verbosity         :     2
     endOfJobSummary   :  true
   } # NuRandomService
-  
+
 }
 
 
 physics: {
   analyzers: {
     validatedTest: {
-      
+
       module_type   : ValidatedConfigSeedTest
-      
+
       # this seed is frozen
       SeedOne: 24
-      
+
       # this seed is not frozen
       # SeedTwo: 29
-      
-      
+
+
     } # validatedTest
   } # analyzers
-  
+
   tests    : [ validatedTest ]
   end_paths: [ tests ]
-  
+
 } # physics
