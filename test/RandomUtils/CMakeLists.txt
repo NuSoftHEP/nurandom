@@ -2,7 +2,7 @@ add_subdirectory(Providers)
 
 art_make(
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
-  LIB_LIBRARIES 
+  LIB_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
     ${ART_FRAMEWORK_CORE}
     ${ART_FRAMEWORK_UTILITIES}
@@ -153,6 +153,8 @@ endforeach( ServiceTestName )
 # The second batch of tests is for NuRandomService ("integration" tests for art service only)
 set( SuccessfulServiceOnlyTests
   PerEvent01
+  ValidatedConfigLinear
+  ValidatedConfigPerEvent
   )
 foreach( ServiceTestName ${SuccessfulServiceOnlyTests} )
   cet_test( test${ServiceTestName} HANDBUILT
