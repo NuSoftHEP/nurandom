@@ -1,5 +1,5 @@
 /**
- * @file NuRandomService.h
+ * @file nurandom/RandomUtils/NuRandomService.h
  * @brief An art service to assist in the distribution of guaranteed unique seeds to all engines within an art job.
  * @author Gianluca Petrillo (petrillo@fnal.gov), Rob Kutschke (kutschke@fnal.gov)
  * @date   2013/03/14 19:54:49
@@ -44,6 +44,7 @@
 #endif // NURANDOM_RANDOMUTILS_NuRandomService_USEROOT
 
 // From art and its tool chain.
+#include "fhiclcpp/types/OptionalAtom.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "art/Framework/Core/detail/EngineCreator.h"
 #include "art/Framework/Services/Optional/RandomNumberGenerator.h"
@@ -61,24 +62,33 @@ namespace art {
 
 namespace rndm {
 
+  /// Type of seed used in _art_ and by us.
+  using seed_t = art::detail::EngineCreator::seed_t;
+
+  /// Type of FHiCL parameter to be used to read a random seed.
+  using SeedAtom = fhicl::OptionalAtom<seed_t>;
+
+
+
   /**
    * @brief An art service to assist in the distribution of guaranteed unique
    * seeds to all engines within an art job.
-   * @see SeedMaster
+   * @see `rndm::SeedMaster`
    *
-   * NuRandomService centrally manages seeds for random generator engines.
+   * `rndm::NuRandomService` centrally manages seeds for random generator
+   * engines.
    *
-   * The NuRandomService acts as an interface between art framework and the
-   * SeedMaster class.
+   * The `NuRandomService` acts as an interface between art framework and the
+   * `rndm::SeedMaster` class.
    *
-   * The documentation is mantained in the SeedMaster class.
-   * The configuration of NuRandomService is exactly the same as SeedMaster's,
-   * and in art it's read from `services.NuRandomService`.
-   * The following documentation describes features of NuRandomService that are
-   * built on top of SeedMaster to have a more convenient interaction within
-   * the art framework.
+   * The documentation is mantained in the `rndm::SeedMaster` class.
+   * The configuration of `NuRandomService` is exactly the same as
+   * `SeedMaster`'s,  and in art it's read from `services.NuRandomService`.
+   * The following documentation describes features of `NuRandomService` that
+   * are built on top of `rndm::SeedMaster` to have a more convenient
+   * interaction within the art framework.
    *
-   * Before asking NuRandomService for its seed, an engine must be in some way
+   * Before asking `NuRandomService` for its seed, an engine must be in some way
    * registered. Once the engine is registered, its original seed can be queried
    * again by calling `getSeed()` methods.
    *
@@ -88,9 +98,9 @@ namespace rndm {
    *
    * Here "engine" means a class that is able to generate random numbers
    * according to a flat distribution.
-   * Both art and NuRandomService are module-based, that means that the engines
-   * are in the context of a specific module instance, and different module
-   * instances have independent engines.
+   * Both art and `NuRandomService` are module-based, that means that the
+   * engines are in the context of a specific module instance, and different
+   * module instances have independent engines.
    * That is the reason why you don't need to specify anything about the module
    * when creating or obtaining a random engine, and it is also the reason why
    * engines outside module context are not supported by the framework.
@@ -103,7 +113,7 @@ namespace rndm {
    *
    * A "seeder" is a callable object (e.g. a function) that sets the seed of
    * a certain engine. The seeder is expected to find out by its own which
-   * engine it has to seed, and fot that it is provided an engine ID.
+   * engine it has to seed, and for that it is provided an engine ID.
    *
    *
    * Registration of a random generator engine
@@ -111,8 +121,9 @@ namespace rndm {
    *
    * Registration must happen in art module constructor, in one of the following
    * ways:
-   *  * by asking this service to create an engine via RandomNumberGenerator
-   *    (see `createEngine()` methods) [discouraged]
+   *  * by asking this service to create an engine via
+   *    `art::RandomNumberGenerator` (see `createEngine()` methods)
+   *    [discouraged]
    *  * by registering an existing engine and its seeding function
    *    (see `registerEngine()` methods)
    *  * by just declaring that an engine exists
@@ -127,30 +138,30 @@ namespace rndm {
    * `registerEngine()`, with the added flexibility of having the seed for the
    * engine already available before the registration is completed.
    *
-   * The use of createEngine() class of function is discouraged and this
+   * The use of `createEngine()` class of function is discouraged and this
    * function might be removed in the future, because of its non-clean use of
    * module interfaces.
    * The recommended approach is more prolix; here an example for an engine with
    * a non-default instance name:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * std::string const instanceName = "instanceName";
+   * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
    *
-   *     std::string const instanceName = "instanceName";
-   *     auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+   * // declare an engine; NuRandomService associates an (unknown) engine, in
+   * // the current module and an instance name, with a seed (returned)
+   * auto const seed = Seeds.declareEngine(instanceName);
    *
-   *     // declare an engine; NuRandomService associates an (unknown) engine, in
-   *     // the current module and an instance name, with a seed (returned)
-   *     auto const seed = Seeds.declareEngine(instanceName);
+   * // now create the engine (for example, use art); seed will be set
+   * auto& engine = createEngine(seed, "HepJamesRandom", instanceName);
    *
-   *     // now create the engine (for example, use art); seed will be set
-   *     auto& engine = createEngine(seed, "HepJamesRandom", instanceName);
-   *
-   *     // finally, complete the registration; seed will be set again
-   *     Seeds.defineEngine(engine);
-   *
+   * // finally, complete the registration; seed will be set again
+   * Seeds.defineEngine(engine);
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * This is equivalent to the discouraged call
-   *
-   *     auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
-   *     Seeds.createEngine(*this, "HepJamesRandom", "instanceName");
-   *
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+   * Seeds.createEngine(*this, "HepJamesRandom", "instanceName");
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * Please read carefully the documentation of the method of your choice, since
    * they have different requirements and apply to different usage patterns.
    *
@@ -162,8 +173,8 @@ namespace rndm {
    * Setting the seed of an engine
    * ------------------------------
    *
-   * NuRandomService is able to set the seed of an engine when the engine is
-   * registered via either:
+   * `rndm::NuRandomService` is able to set the seed of an engine when the
+   * engine is registered via either:
    *  * `createEngine()` (creation of a new CLHEP engine)
    *  * `registerEngine()` (registration of an engine or a seeder function),
    *    if the registered seeder function is valid (non-null) or if a CLHEP
@@ -171,21 +182,21 @@ namespace rndm {
    *    created valid)
    *  * `defineEngine()` (registration of a seeder for an engine that was
    *    already declared), again if the seed is valid
-   * NuRandomService is *not* able to automatically set the seed of an engine if
-   * it was registered via either:
+   * `NuRandomService` is *not* able to automatically set the seed of an engine
+   * if it was registered via either:
    *  * `declareEngine()` (declaration of the existence of an engine),
    *    that does not even require the engine to exist
    *  * `getSeed()` (query of a seed), when it (implicitly) declares an engine
    *    which had not been declared yet
    *
-   * If NuRandomService is able to set the seed, it will do so only once, as soon as
-   * it can.
+   * If `NuRandomService` is able to set the seed, it will do so only once, as
+   * soon as it can.
    * This means that if the policy allows the seed to be known immediately,
    * the seed will be set on registration. In the case of a per-event policy
    * that requires the presence of an event, the seed can be known only
-   * when the event is available, and NuRandomService will set the seed before the
-   * module the engine is associated with starts its main processing method
-   * (produce(), filter() or analyze()).
+   * when the event is available, and `NuRandomService` will set the seed before
+   * the module the engine is associated with starts its main processing method
+   * (`produce()`, `filter()` or `analyze()`).
    *
    *
    * Changing the seeder
@@ -195,7 +206,7 @@ namespace rndm {
    * fully registered is not supported. As a consequence, changing the engine
    * is also not supported.
    *
-   * Since only the seeder function is registered in NuRandomService, a seeder
+   * Since only the seeder function is registered in `NuRandomService`, a seeder
    * function that is flexible enough to change the engine it seeds may work
    * around this limitation.
    *
@@ -203,96 +214,134 @@ namespace rndm {
    * Querying the seed of an engine
    * -------------------------------
    *
-   * If necessary, the seed that NuRandomService has assigned to an engine can be
-   * requested by one of the following two calls:
-   *
-   *     art::ServiceHandle<NuRandomService>->getSeed();
-   *     art::ServiceHandle<NuRandomService>->getSeed("instanceName");
-   *
+   * If necessary, the seed that `NuRandomService` has assigned to an engine can
+   * be requested by one of the following two calls:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * art::ServiceHandle<NuRandomService>()->getSeed();
+   * art::ServiceHandle<NuRandomService>()->getSeed("instanceName");
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * depending on whether the engine has a non-empty instance name,
    * Note that this call implicitly "declares" the engine it refers to.
+   * A call not declaring anything is instead:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * art::ServiceHandle<NuRandomService>()->getCurrentSeed();
+   * art::ServiceHandle<NuRandomService>()->getCurrentSeed("instanceName");
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    *
    * For most policies, the seed is set according to the configuration, once
    * for all. In those cases, `getSeed()` will always return the same value.
    * If the policy prescribes different seeds at different times, the method
    * returns the seed that is assigned to the engine at the time of the call.
    *
-   * Also note that the seed assigned by NuRandomService might not match the current
-   * seed of the engine, if:
-   *  * NuRandomService is not in charge of setting the seed of the engine,
+   * Also note that the seed assigned by `NuRandomService` might not match the
+   * current seed of the engine, if:
+   *  * `NuRandomService` is not in charge of setting the seed of the engine,
    *    and the engine seed has not been set yet
-   *  * the seed was reset directly after NuRandomService set the engine seed
+   *  * the seed was reset directly after `NuRandomService` set the engine seed
    * Both circumstances should be avoided.
    *
    *
-   * Creating the engines independently of NuRandomService
-   * --------------------------------------------------
+   * Creating the engines independently of `rndm::NuRandomService`
+   * --------------------------------------------------------------
    *
    * A number of things must happen for an engine to correctly work with
-   * NuRandomService:
+   * `NuRandomService`:
    *  * the engine instance needs to exist or be created
-   *  * the engine must be "registered" into NuRandomService
-   *  * the seed must be obtained from NuRandomService
+   *  * the engine must be "registered" into `NuRandomService`
+   *  * the seed must be obtained from `NuRandomService`
    *  * the seed must be provided to the engine
    *
-   * A recipe for creating a ROOT engine and let NuRandomService take care of its
-   * seeds is:
+   * A recipe for creating a ROOT engine and let `NuRandomService` take care of
+   * its seeds is:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * // create the engine; ROOT will set some (temporary) seed
+   * fRandom = std::make_unique<TRandom3>();
    *
-   *     // create the engine; ROOT will set some (temporary) seed
-   *     fRandom = std::make_unique<TRandom3>();
-   *
-   *     // declare the engine; NuRandomService associates its seeder, in
-   *     // the current module and an instance name, with a seed (returned);
-   *     // the seed is also set in the engine
-   *     auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
-   *     Seeds.registerEngine(TRandomSeeder(fRandom), "instanceName");
-   *
+   * // declare the engine; NuRandomService associates its seeder, in
+   * // the current module and an instance name, with a seed (returned);
+   * // the seed is also set in the engine
+   * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+   * Seeds.registerEngine(TRandomSeeder(fRandom), "instanceName");
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * Here `fRandom` is supposed to be a member function of the module.
    * The `TRandomSeeder` object is an object that knows how to set the seed
-   * of the TRandom-derived ROOT generator passed as constructor argument.
-   * For an example of implementation, see the source code of NuRandomService.
+   * of the `TRandom`-derived ROOT generator passed as constructor argument.
+   * For an example of implementation, see the source code of `NuRandomService`.
    *
    *
-   * Overriding the seed from NuRandomService at run time
-   * -------------------------------------------------
+   * Overriding the seed from `rndm::NuRandomService` at run time
+   * -------------------------------------------------------------
    *
-   * NuRandomService (and SeedMaster, which the former relies upon) will decide
-   * which seed to give to each registered engine and, when possible
+   * `NuRandomService` (and `SeedMaster`, which the former relies upon) will
+   * decide which seed to give to each registered engine and, when possible
    * (see above), will set that seed too.
    *
-   * All registration functions offer an extended signature to tell NuRandomService
-   * that if there is an explicitly configured seed, that should take presedence
-   * over the one automatically assigned by SeedMaster policy.
-   * This extended signature includes:
+   * All registration functions offer an extended signature to tell
+   * `NuRandomService` that if there is an explicitly configured seed, that
+   * should take precedence over the one automatically assigned by
+   * `rndm::SeedMaster` policy. This extended signature includes:
    *  * a FHiCL parameter set
    *  * a configuration parameter name, or a list of them
-   * NuRandomService will look in the specified parameter set and if it finds a
-   * value corresponding to any of the specified parameter names, will set
+   *  * a optional atom of type `rndm::seed_t`, also available with the name
+   *    `rndm::SeedAtom`
+   * `NuRandomService` will look in the specified parameter set and if it finds
+   * a value corresponding to any of the specified parameter names, will set
    * the seed of the engine to that value, and it will mark the engine as
-   * "frozen" (meaning that NuRandomService will not ever set a seed again on that
-   * engine). [see also the exception to this rule below]
-   *
+   * "frozen" (meaning that `NuRandomService` will not ever set a seed again on
+   * that engine). [see also the
+   * @link nurandom_NuRandomService_SpecialSeedValue "exception to this rule"
+   * below]
+   * Likewise, if the optional parameter is specified, its value will be
+   * honored, and the service will be queried for an automatic seed otherwise.
    * The typical use of this function is to read a parameter ("Seed" is the
    * suggested name) from the configuration of the module. Note that this is in
-   * contrast with the location where NuRandomService seeds are normally configured,
-   * that is in the configuration of NuRandomService service itself.
-   * For example:
-   *
-   *     // within module construction:
-   *     art::ServiceHandle<rndm::NuRandomService>()->registerEngine
-   *       (engine, "instanceName", pset, { "Seed", "MySeed" });
-   *
-   * Here NuRandomService will provide a seed only if it does not find in the
+   * contrast with the location where `NuRandomService` seeds are normally
+   * configured, that is in the configuration of `NuRandomService` service
+   * itself. For example:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * // within module construction:
+   * art::ServiceHandle<rndm::NuRandomService>()->registerEngine
+   *   (engine, "instanceName", pset, { "Seed", "MySeed" });
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   * Here `NuRandomService` will provide a seed only if it does not find in the
    * parameter set `pset` any of the specified configuration parameters (first
    * "Seed", then "MySeed" in this example). In other words, if "Seed" exists,
    * its value is used as seed, otherwise if "MySeed" exists, its value is used
    * instead, and otherwise NuRandomService is given control on that seed.
+   * @anchor nurandom_NuRandomService_SpecialSeedValue
    * The exception is that if the specified seed is a "magic value", the
    * `InvalidSeed` (`0`), it is interpreted as a request to ignore the parameter
    * and use the service to get the seed. This is made as a quick way to remove
    * the seed override from an existing FHiCL file with one line.
    * Note that if NuRandomService does not get the control on the seed,
    * policies that reseed on event-by-event basis will not act on the engine.
+   *
+   * An example of the use of the validated configuration, for an analyzer
+   * containing in its definition:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * CLHEP::HepRandomEngine& fEngine;
+   *
+   *   public:
+   *
+   * struct Config {
+   *
+   *   rndm::SeedAtom Seed{
+   *     fhicl::Name("Seed"),
+   *     fhicl::Comment("optional seed for random engine")
+   *     };
+   *
+   * }; // struct Config
+   *
+   * using Parameters = art::EDAnalyzer::Table<Config>;
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   * is to have an entry in the initializer list of the constructor such as:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * my_ns::MyAnalyzer::MyAnalyzer(Parameters const& config)
+   *   : art::EDAnalyzer(config)
+   *   , fEngine(art::ServiceHandle<rndm::NuRandomService>()->createEngine
+   *     (*this, config().Seed))
+   *   // ...
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    *
    *
    * Engines outside of the module context
@@ -334,15 +383,15 @@ namespace rndm {
    * For an example of usage, see GlobalEngineUserTestService service in the
    * test suite. Here is an excerpt using a ROOT TRandom3 engine, that can
    * be constructed without seed. In the service constructor, the code:
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * // create a new engine, that we own (engine be a class data member)
+   * engine = std::make_unique<TRandom3>();
+   * auto seed = Seeds.registerEngine
+   *   (rndm::NuRandomService::TRandomSeeder(engine.get()), "MyService");
    *
-   *     // create a new engine, that we own (engine be a class data member)
-   *     engine = std::make_unique<TRandom3>();
-   *     auto seed = Seeds.registerEngine
-   *       (rndm::NuRandomService::TRandomSeeder(engine.get()), "MyService");
-   *
-   *     // MyService callback registrations in the ActivityRegistry
-   *     // should follow the first call to NuRandomService!
-   *
+   * // MyService callback registrations in the ActivityRegistry
+   * // should follow the first call to NuRandomService!
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * where rndm::NuRandomService::TRandomSeeder is a seeder class for TRandom
    * engines (optionally provided in NuRandomService.h, and very easy to write).
    * This excerpt creates and owns a TRandom3 engine, and then it registers it
@@ -350,9 +399,9 @@ namespace rndm {
    * reseeding the engine at each event, should the policy require it.
    * The service will access the engine as a data member, and should it need the
    * seed it will use:
-   *
-   *     art::ServiceHandle<rndm::NuRandomService>()->getGlobalSeed("MyService");
-   *
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+   * art::ServiceHandle<rndm::NuRandomService>()->getGlobalSeed("MyService");
+   * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * Note that is a good idea to give the engine an instance name after the
    * service name itself, since the instance name is global and it's the only
    * thing distinguishing global engines, and name conflicts between different
@@ -387,34 +436,44 @@ namespace rndm {
 
 
     /**
-     * @brief Returns a seed for the engine with specified instance name
-     * @param instanceName name of the engine instance
+     * @brief Returns a seed for the engine with specified instance name.
+     * @param moduleLabel label of the module the engine is assigned to
+     * @param instanceName name of the engine instance within that module
      * @return a seed for the engine with specified instance name
-     * @see getGlobalSeed()
+     * @see `getGlobalSeed()`
      *
-     * The seed for an engine in the context of the current module is returned.
+     * The seed for an engine in the context of the specified module label is
+     * returned.
      * If you need the seed for an engine outside that context, use
      * `getGlobalSeed()` instead.
      *
      * The engine needs to have been registered before, in any of the supported
-     * ways.
-     * If it has not, this call will declare it with declareEngine()
+     * ways. If it has not, this call will declare it with `declareEngine()`
      * and no further registration will be allowed.
      *
      * While this method can be called at any time, the registration of an
-     * engine can happen only at construction time, and it will make the call to
-     * this method fail if it is called at any other time.
+     * engine can happen only at construction time: if it is called at any other
+     * time and if the call triggers such registration as described above,
+     * it will make the call to this method fail.
+     *
+     * @note This method is thread-safe.
      */
-    seed_t getSeed(std::string instanceName);
+    seed_t getSeed
+      (std::string const& moduleLabel, std::string const& instanceName);
 
     /**
-     * @brief Returns a seed for the engine with default instance name
-     * @return a seed for the engine with default instance name
+     * @brief Returns a seed for the engine with specified instance name.
+     * @param instanceName name of the engine instance
+     * @return a seed for the engine with specified instance name
+     * @see `getGlobalSeed()`
      *
-     * This method is equivalent to getSeed(std::string) with an empty instance
-     * name.
+     * The seed for an engine in the context of the **current module** is
+     * returned. See `getSeed(std::string const&, std::string const&)` for
+     * details.
+     *
+     * @note This method is **not thread-safe**.
      */
-    seed_t getSeed();
+    seed_t getSeed(std::string instanceName = "");
 
 
     /**
@@ -456,8 +515,8 @@ namespace rndm {
       { return seeds.getCurrentSeed(qualify_global_engine(instanceName)); }
 
 
+    // --- BEGIN --- Create and register an engine -----------------------------
 #if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
-    /// @{
     /**
      * @name Create and register an engine
      *
@@ -470,77 +529,144 @@ namespace rndm {
      * module interfaces.
      * The recommended approach is more verbose;
      * here an example for an engine with a non-default instance name:
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+     * std::string const instanceName = "instanceName";
+     * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
      *
-     *     std::string const instanceName = "instanceName";
-     *     auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+     * // declare an engine; NuRandomService associates an (unknown) engine, in
+     * // the current module and an instance name, with a seed (returned)
+     * auto const seed = Seeds.declareEngine(instanceName);
      *
-     *     // declare an engine; NuRandomService associates an (unknown) engine, in
-     *     // the current module and an instance name, with a seed (returned)
-     *     auto const seed = Seeds.declareEngine(instanceName);
+     * // now create the engine (for example, use art); seed will be set
+     * auto& engine = createEngine(seed, "HepJamesRandom", instanceName);
      *
-     *     // now create the engine (for example, use art); seed will be set
-     *     auto& engine = createEngine(seed, "HepJamesRandom", instanceName);
-     *
-     *     // finally, complete the registration; seed will be set again
-     *     Seeds.defineEngine(engine);
+     * // finally, complete the registration; seed will be set again
+     * Seeds.defineEngine(engine);
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      *
      * This is equivalent to the discouraged call
-     *
-     *     auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
-     *     Seeds.createEngine(*this, "HepJamesRandom", "instanceName");
-     *
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+     * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+     * Seeds.createEngine(*this, "HepJamesRandom", "instanceName");
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      */
+    /// @{
 
-    //@{
     /**
-     * @brief Creates an engine with RandomNumberGenerator service
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
      * @param module module who will own the new engine
      * @param type the type of engine
      * @param instance the name of the engine instance
+     * @param seed the seed to use for this engine (optional)
      * @return the seed used
-     * @see registerEngine()
+     * @see `registerEngine()`
      *
      * This method creates a new engine by calling
-     * RandomNumberGenerator::createEngine() with the seed from getSeed().
+     * `RandomNumberGenerator::createEngine()` with the seed from `getSeed()`.
      * The meaning of the two parameters is the same as in that function,
-     * including the somehow inconvenient order of the arguments
+     * including the somehow inconvenient order of the arguments.
+     *
+     * The engine seed is set. If the `seed` optional parameter has a value,
+     * that value is used as seed. Otherwise, the seed is obtained from
+     * `rndm::NuRandomService`.
+     *
+     * If the `seed` is not specified, it is obtained in a way equivalent to
+     * `getSeed()` (but multi-treading safe).
+     *
+     * If also `instance` is not specified, the engine is created with no
+     * instance name (equivalent to an empty instance name).
+     *
+     * If also `type` is not specified, the type of the engine is the default
+     * one from `art::RandomNumberGenerator`.
      *
      * @note The module parameter is needed since the interface to create
-     * an engine by RandomNumberGenerator service is private and open only
-     * to friends.
+     *       an engine by `art::RandomNumberGenerator` service is private
+     *       and open only to friends.
+     */
+    template <typename Module>
+    std::reference_wrapper<NuRandomService::engine_t> createEngine(
+      Module& module,
+      std::string type = "", std::string instance = "",
+      std::optional<seed_t> const seed = std::nullopt
+      );
+
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param type the type of engine
+     * @param instance the name of the engine instance
+     * @param seedParam the optional seed configuration parameter
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, std::optional<seed_t> const)`
+     * with the difference that the seed is read from `seedParam`; if
+     * that optional parameter is not present, then the seed is obtained from
+     * `rndm:::NuRandomService`.
+     */
+    template <typename Module>
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
+      Module& module, std::string type, std::string instance,
+      SeedAtom const& seedParam
+      );
+
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param type the type of engine
+     * @param seedParam the optional seed configuration parameter
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, std::optional<seed_t> const)`
+     * with the difference that the seed is read from `seedParam`; if
+     * that optional parameter is not present, then the seed is obtained from
+     * `rndm:::NuRandomService`.
+     * Also, the engine is always associated with an empty instance name.
      */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine
-      (Module& module, std::string type, std::string instance = "");
+      (Module& module, std::string type, SeedAtom const& seedParam)
+      { return createEngine(module, type, "", seedParam); }
 
-    template <typename Module>
-    [[nodiscard]] std::reference_wrapper<engine_t> createEngine(Module& module);
-    //@}
-
-    //@{
     /**
-     * @brief Creates an engine with RandomNumberGenerator service
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param seedParam the optional seed configuration parameter
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, std::optional<seed_t> const)`
+     * with the difference that the seed is read from `seedParam`; if
+     * that optional parameter is not present, then the seed is obtained from
+     * `rndm:::NuRandomService`.
+     * Also, the engine is always created of the default type and associated
+     * with an empty instance name.
+     */
+    template <typename Module>
+    [[nodiscard]] std::reference_wrapper<engine_t> createEngine
+      (Module& module, SeedAtom const& seedParam)
+      { return createEngine(module, "", "", seedParam); }
+
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
      * @param module module who will own the new engine
      * @param type the type of engine
      * @param instance the name of the engine instance
      * @param pset parameter set to read parameters from
-     * @param pname name or names of the seed parameters
+     * @param pname name of the seed parameters
      * @return the seed used
-     * @see registerEngine()
+     * @see `registerEngine()`
      *
-     * This method creates a new engine by calling
-     * RandomNumberGenerator::createEngine() with the seed from getSeed().
-     * The meaning of the two parameters is the same as in that function,
-     * including the somehow inconvenient order of the arguments
-     *
-     * The engine seed is set. First, the seed is retrieved from the specified
-     * configuration, looking for the first of the parameters in pname that is
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, std::optional<seed_t> const)`
+     * with the difference that the seed is retrieved from the specified
+     * configuration, looking for the first of the parameters in `pname` that is
      * available. If no parameter is found, the seed is obtained from
-     * NuRandomService.
-     *
-     * @note The module parameter is needed since the interface to create
-     * an engine by RandomNumberGenerator service is private and open only
-     * to friends.
+     * `rndm::NuRandomService`.
      */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
@@ -549,12 +675,43 @@ namespace rndm {
       )
       { return createEngine(module, type, instance, pset, { pname }); }
 
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param type the type of engine
+     * @param instance the name of the engine instance
+     * @param pset parameter set to read parameters from
+     * @param pnames names of the seed parameters
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, fhicl::ParameterSet const&, std::string)`
+     * with the difference that the seed can be specified by any of the
+     * parameters named in `pnames`: the first match will be used. As usual,
+     * if no parameter is found, the seed is obtained from
+     * `rndm:::NuRandomService`.
+     */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type, std::string instance,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       );
 
+
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param type the type of engine
+     * @param pset parameter set to read parameters from
+     * @param pname name of the seed parameters
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, fhicl::ParameterSet const&, std::string)`
+     * with the difference that the engine is given no instance name.
+     */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type,
@@ -562,6 +719,23 @@ namespace rndm {
       )
       { return createEngine(module, type, "", pset, pname); }
 
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param type the type of engine
+     * @param instance the name of the engine instance
+     * @param pset parameter set to read parameters from
+     * @param pnames names of the seed parameters
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, fhicl::ParameterSet const&, std::string)`
+     * with the difference that the engine is not given any instance name and
+     * that seed can be specified by any of the parameters named in `pnames`:
+     * the first match will be used. As usual, if no parameter is found, the
+     * seed is obtained from `rndm:::NuRandomService`.
+     */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module, std::string type,
@@ -569,6 +743,20 @@ namespace rndm {
       )
       { return createEngine(module, type, "", pset, pnames); }
 
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param instance the name of the engine instance
+     * @param pset parameter set to read parameters from
+     * @param pname name or names of the seed parameters
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, fhicl::ParameterSet const&, std::string)`
+     * with the difference that the default engine is used (determined by
+     * `art::RandomNumberGenerator`) and no instance name is given to it.
+     */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module,
@@ -576,107 +764,225 @@ namespace rndm {
       )
       { return createEngine(module, pset, { pname }); }
 
+    /**
+     * @brief Creates an engine with `art::RandomNumberGenerator` service.
+     * @param module module who will own the new engine
+     * @param pset parameter set to read parameters from
+     * @param pnames names of the seed parameters
+     * @return the seed used
+     * @see `registerEngine()`
+     *
+     * This method operates like
+     * `createEngine(Module&, std::string, std::string, fhicl::ParameterSet const&, std::string)`
+     * with the difference that the engine is created with the default type
+     * (determined in `art::RandomNumberGenerator`), not given any instance name
+     * and that seed can be specified by any of the parameters named in
+     * `pnames`: the first match will be used. As usual, if no parameter is
+     * found, the seed is obtained from `rndm:::NuRandomService`.
+     */
     template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> createEngine(
       Module& module,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
-      );
-    //@}
+      )
+      { return createEngine(module, "", "", pset, pnames); }
 
-    /// @}
 #endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
+    /// @}
+    // --- END --- Create and register an engine -------------------------------
 
+
+
+    // --- BEGIN --- Register an existing engine -------------------------------
+    /**
+     * @name Register an existing engine
+     *
+     * The life time of the engine is under user's control, while the seeding
+     * managed by this service.
+     */
     /// @{
-    /// @name Register an existing engine
-    ///
-    /// The life time of the engine is under user's control, while the seeding
-    /// is managed by this service.
-    ///
 
     /**
-     * @brief Registers an existing engine with NuRandomService
+     * @brief Registers an existing engine with `rndm::NuRandomService`.
      * @param seeder function used to set the seed of the existing engine
      * @param instance name of the engine
+     * @param seed the optional seed configuration parameter
      * @return the seed assigned to the engine (may be invalid)
-     * @see createEngine()
+     * @see `createEngine()`
      *
-     * This function works similarly to createEngine(), but it uses an existing
-     * engine instead of creating a new one by RandomNumberGenerator service.
+     * This function works similarly to `createEngine()`, but it uses an
+     * existing engine instead of creating a new one via
+     * `art::RandomNumberGenerator` service.
      * The seeder function must be provided for the service to be of any use:
-     * registerEngine() will set the seed immediately, and the seeder function
+     * `registerEngine()` will set the seed immediately, and the seeder function
      * will be used to set the seed for policies that do that on each event.
-     * The instance name must also be unique, since for NuRandomService purposes
-     * the registered engine is no different from any other, created by
-     * RandomNumberGenerator or not.
+     * The instance name must also be unique, since for `NuRandomService`
+     * purposes the registered engine is no different from any other, created by
+     * `art::RandomNumberGenerator` or not.
      *
      * Three standard functions are provided as seeders, for use with
-     * RandomNumberGenerator engines (RandomNumberGeneratorSeeder()),
-     * with a CLHEP::HepRandomEngine (CLHEPengineSeeder class) and with ROOT's
-     * TRandom (TRandomSeeder class). Note that CLHEP and ROOT classes are not
-     * compiled in NuRandomService by default, and the recommendation is to take
-     * their implementation as an example and create your own after them).
-     * Any seeder function with the prototype of NuRandomService::Seeder_t:
-     *
-     *     void Seeder(EngineId const&, seed_t);
-     *
+     * `art::RandomNumberGenerator` engines (`RandomNumberGeneratorSeeder()`),
+     * with a `CLHEP::HepRandomEngine` (`CLHEPengineSeeder` class) and with
+     * ROOT's `TRandom` (`TRandomSeeder` class). Note that CLHEP and ROOT
+     * classes are not compiled in `NuRandomService` by default, and the
+     * recommendation is to take their implementation as an example and create
+     * your own after them).
+     * Any seeder function with the prototype of `NuRandomService::Seeder_t`:
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+     * void Seeder(EngineId const&, seed_t);
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * or a functor with
-     *
-     *     void operator() (EngineId const&, seed_t);
-     *
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+     * void operator() (EngineId const&, seed_t);
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * can be used as seeder.
+     *
+     * The engine seed will be set. If the `seed` optional parameter has a
+     * value, that value is used as seed. Otherwise, the seed is obtained from
+     * `rndm::NuRandomService`.
+     *
+     * If the `seed` is not specified, it is obtained in a way equivalent to
+     * `getSeed()` (but multi-treading safe).
+     *
+     * If also `instance` is not specified, the engine is created with no
+     * instance name (equivalent to an empty instance name).
+     */
+    seed_t registerEngine(
+      SeedMaster_t::Seeder_t seeder, std::string const instance = "",
+      std::optional<seed_t> const seed = std::nullopt
+      );
+
+
+    /**
+     * @brief Registers an existing engine with `art::NuRandomService`.
+     * @param seeder function used to set the seed of the existing engine
+     * @param instance name of the engine
+     * @param seedParam the optional seed configuration parameter
+     * @return the seed assigned to the engine (may be invalid)
+     * @see `registerEngine()`
+     *
+     * This method works similarly to
+     * `registerEngine(SeedMaster_t::Seeder_t, std::string const, std::optional<seed_t> const`,
+     * with the difference that the seed is read from `seedParam`; if
+     * that optional parameter is not present, then the seed is obtained from
+     * `rndm:::NuRandomService`.
+     */
+    seed_t registerEngine(
+      SeedMaster_t::Seeder_t seeder, std::string const instance,
+      SeedAtom const& seedParam
+      );
+
+    /**
+     * @brief Registers an existing engine with `art::NuRandomService`.
+     * @param seeder function used to set the seed of the existing engine
+     * @param seedParam the optional seed configuration parameter
+     * @return the seed assigned to the engine (may be invalid)
+     * @see `registerEngine()`
+     *
+     * This method works similarly to
+     * `registerEngine(SeedMaster_t::Seeder_t, std::string const, std::optional<seed_t> const`,
+     * with the difference that the seed is read from `seedParam`; if
+     * that optional parameter is not present, then the seed is obtained from
+     * `rndm:::NuRandomService`.
+     * In addition, the engine is always registered with no instance name.
      */
     seed_t registerEngine
-      (SeedMaster_t::Seeder_t seeder, std::string instance = "" );
+      (SeedMaster_t::Seeder_t seeder, SeedAtom const& seedParam)
+      { return registerEngine(seeder, "", seedParam); }
 
-    //@{
     /**
-     * @brief Registers an existing engine with NuRandomService
+     * @brief Registers an existing engine with `art::NuRandomService`.
      * @param seeder function used to set the seed of the existing engine
      * @param instance name of the engine
      * @param pset parameter set to read parameters from
-     * @param pname name or names of the seed parameters
+     * @param pname name of the optional seed parameter
      * @return the seed assigned to the engine (may be invalid)
-     * @see createEngine()
+     * @see `createEngine()`
      *
-     * These functions work similarly to registerEngine(), but the preferred
-     * way to obtain the seed is from configuration.
-     * First, the seed is retrieved from the specified
-     * configuration, looking for the first of the parameters in pname that is
-     * avaialble. If no parameter is found, the seed is obtained from
-     * NuRandomService.
+     * This method works similarly to
+     * `registerEngine(SeedMaster_t::Seeder_t, std::string const, std::optional<seed_t> const`,
+     * but the preferred way to obtain the seed is from the configuration
+     * parameter named `pname` in `pset`. If that parameter is found, the seed
+     * is obtained from `rndm::NuRandomService`.
      */
     seed_t registerEngine(
       SeedMaster_t::Seeder_t seeder, std::string instance,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return registerEngine(seeder, instance, pset, { pname }); }
+
+    /**
+     * @brief Registers an existing engine with `art::NuRandomService`.
+     * @param seeder function used to set the seed of the existing engine
+     * @param instance name of the engine
+     * @param pset parameter set to read parameters from
+     * @param pnames names of the seed parameters
+     * @return the seed assigned to the engine (may be invalid)
+     * @see `createEngine()`
+     *
+     * This method works similarly to
+     * `registerEngine(SeedMaster_t::Seeder_t, std::string const, std::optional<seed_t> const`,
+     * but the preferred way to obtain the seed is from the first available
+     * configuration parameter in `pset` among the ones listed in `pnames`.
+     * If that parameter is found, the seed is obtained from
+     * `rndm::NuRandomService`.
+     */
     seed_t registerEngine(
       SeedMaster_t::Seeder_t seeder, std::string instance,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       );
+
+    /**
+     * @brief Registers an existing engine with `art::NuRandomService`.
+     * @param seeder function used to set the seed of the existing engine
+     * @param pset parameter set to read parameters from
+     * @param pname name of the optional seed parameter
+     * @return the seed assigned to the engine (may be invalid)
+     * @see `createEngine()`
+     *
+     * This method works similarly to
+     * `registerEngine(SeedMaster_t::Seeder_t, std::string const, std::optional<seed_t> const`,
+     * but the preferred way to obtain the seed is from the configuration
+     * parameter named `pname` in `pset`. If that parameter is found, the seed
+     * is obtained from `rndm::NuRandomService`. Also, the engine is assigned
+     * no instance name.
+     */
     seed_t registerEngine(
       SeedMaster_t::Seeder_t seeder,
       fhicl::ParameterSet const& pset, std::string pname
       )
       { return registerEngine(seeder, "", pset, pname); }
+
+    /**
+     * @brief Registers an existing engine with `art::NuRandomService`.
+     * @param seeder function used to set the seed of the existing engine
+     * @param pset parameter set to read parameters from
+     * @param pnames names of the seed parameters
+     * @return the seed assigned to the engine (may be invalid)
+     * @see `createEngine()`
+     *
+     * This method works similarly to
+     * `registerEngine(SeedMaster_t::Seeder_t, std::string const, std::optional<seed_t> const`,
+     * but the preferred way to obtain the seed is from the first available
+     * configuration parameter in `pset` among the ones listed in `pnames`.
+     * If that parameter is found, the seed is obtained from
+     * `rndm::NuRandomService`. Also, the engine is assigned no instance name.
+     */
     seed_t registerEngine(
       SeedMaster_t::Seeder_t seeder,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
       )
       { return registerEngine(seeder, "", pset, pnames); }
-    //@}
 
 #if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
     /**
-     * @brief Registers an existing CLHEP engine with NuRandomService
+     * @brief Registers an existing CLHEP engine with `art::NuRandomService`.
      * @param engine a reference to the CLHEP random generator engine
-     * @param instance name of the engine
-     * @param pset parameter set to read parameters from
-     * @param pname name or names of the seed parameters
+     * @param instance (default: none) name of the engine
      * @return the seed assigned to the engine (may be invalid)
      *
      * The specified engine is not managed.
-     * It may be owned by RandomNumberGenerator service.
+     * It may be owned by `art::RandomNumberGenerator` service.
      *
      * The engine is expected to be valid as long as this service performs
      * reseeding.
@@ -684,6 +990,40 @@ namespace rndm {
     seed_t registerEngine
       (CLHEP::HepRandomEngine& engine, std::string instance = "")
       { return registerEngine(CLHEPengineSeeder(engine), instance); }
+
+    /**
+     * @brief Registers an existing CLHEP engine with `art::NuRandomService`.
+     * @param engine a reference to the CLHEP random generator engine
+     * @param instance name of the engine
+     * @param seedParam the optional seed configuration parameter
+     * @return the seed assigned to the engine (may be invalid)
+     *
+     * The specified engine is not managed.
+     * It may be owned by `art::RandomNumberGenerator` service.
+     *
+     * The engine is expected to be valid as long as this service performs
+     * reseeding.
+     */
+    seed_t registerEngine(
+      CLHEP::HepRandomEngine& engine, std::string instance,
+      SeedAtom const& seedParam
+      )
+      { return registerEngine(CLHEPengineSeeder(engine), instance, seedParam); }
+
+    /**
+     * @brief Registers an existing CLHEP engine with `art::NuRandomService`.
+     * @param engine a reference to the CLHEP random generator engine
+     * @param instance name of the engine
+     * @param pset parameter set to read parameters from
+     * @param pnames names of the seed parameters
+     * @return the seed assigned to the engine (may be invalid)
+     *
+     * The specified engine is not managed.
+     * It may be owned by `art::RandomNumberGenerator` service.
+     *
+     * The engine is expected to be valid as long as this service performs
+     * reseeding.
+     */
     seed_t registerEngine(
       CLHEP::HepRandomEngine& engine, std::string instance,
       fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
@@ -693,7 +1033,9 @@ namespace rndm {
           (CLHEPengineSeeder(engine), instance, pset, pnames);
       }
 #endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
+
     /// @}
+    // --- END --- Register an existing engine ---------------------------------
 
 
     /// @{
@@ -937,26 +1279,26 @@ namespace rndm {
     //@}
 
     //@{
-    /// Reads the seed from the first of the specified parameters available
-    /// @return whether any parameter was found
-    static bool readSeedParameter
-      (seed_t& seed, fhicl::ParameterSet const& pset, std::string pname)
-      { return readSeedParameter(seed, pset, { pname }); }
-    static bool readSeedParameter(
-      seed_t& seed, fhicl::ParameterSet const& pset,
+    /// Reads the seed from the first of the specified parameters available.
+    /// @return the value of the seed if found, no value otherwise
+    static std::optional<seed_t> readSeedParameter
+      (fhicl::ParameterSet const& pset, std::string pname)
+      { return readSeedParameter(pset, { pname }); }
+    static std::optional<seed_t> readSeedParameter(
+      fhicl::ParameterSet const& pset,
       std::initializer_list<std::string> pnames
       );
+    static std::optional<seed_t> readSeedParameter(SeedAtom const& param);
     //@}
 
     /// Query a seed from the seed master
     seed_t querySeed(EngineId const& id);
 
-    /// Helper to retrieve a seed including configuration
+
+    /// Helper to retrieve a seed including configuration.
     /// @return the seed, and whether it is fixed (that is, from configuration)
-    std::pair<seed_t, bool> findSeed(
-      EngineId const& id,
-      fhicl::ParameterSet const& pset, std::initializer_list<std::string> pnames
-      );
+    std::pair<seed_t, bool> extractSeed
+      (EngineId const& id, std::optional<seed_t> seed);
 
     /// Forces NuRandomService not to change the seed of the specified engine
     void freezeSeed(EngineId const& id, seed_t frozen_seed);
@@ -982,7 +1324,7 @@ namespace rndm {
     void postEndJob            ();
 
 
- }; // class NuRandomService
+  }; // class NuRandomService
 
 
 #if (NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP)
@@ -996,31 +1338,35 @@ namespace rndm {
   std::reference_wrapper<NuRandomService::engine_t>
   NuRandomService::createEngine(Module& module,
                                 std::string type,
-                                std::string instance /* = "" */)
+                                std::string instance,
+                                std::optional<seed_t> const seed)
   {
-    EngineId id = qualify_engine_label(instance);
-    auto& engine = module.createEngine(0, type, instance);
-    const seed_t seed = prepareEngine(id, CLHEPengineSeeder{engine});
-    engine.setSeed(seed, 0);
+    EngineId const id = qualify_engine_label(instance);
+    auto& engine = type.empty()
+      ? module.createEngine(0)
+      : module.createEngine(0, type, instance)
+      ;
+    registerEngineAndSeeder(id, CLHEPengineSeeder{engine});
+    auto const [seedValue, frozen] = extractSeed(id, seed);
+    engine.setSeed(seedValue, 0);
     mf::LogInfo("NuRandomService")
       << "Seeding " << type << " engine \"" << id.artName()
-      << "\" with seed " << seed << ".";
+      << "\" with seed " << seedValue << ".";
+    if (frozen) freezeSeed(id, seedValue);
     return engine;
-  } // NuRandomService::createEngine(strings)
+  } // NuRandomService::createEngine(seed_t)
+
 
   template <typename Module>
   std::reference_wrapper<NuRandomService::engine_t>
-  NuRandomService::createEngine(Module& module)
+  NuRandomService::createEngine(Module& module,
+                                std::string type,
+                                std::string instance,
+                                SeedAtom const& seedParam)
   {
-    EngineId id = qualify_engine_label();
-    auto& engine = module.createEngine(0);
-    const seed_t seed = prepareEngine(id, CLHEPengineSeeder{engine});
-    engine.setSeed(seed, 0);
-    mf::LogInfo("NuRandomService")
-      << "Seeding default-type engine \"" << id.artName()
-      << "\" with seed " << seed << ".";
-    return engine;
-  } // NuRandomService::createEngine()
+    return createEngine(module, type, instance, readSeedParameter(seedParam));
+  } // NuRandomService::createEngine(ParameterSet)
+
 
   template <typename Module>
   std::reference_wrapper<NuRandomService::engine_t>
@@ -1030,36 +1376,10 @@ namespace rndm {
                                 fhicl::ParameterSet const& pset,
                                 std::initializer_list<std::string> pnames)
   {
-    EngineId id = qualify_engine_label(instance);
-    auto& engine = module.createEngine(0, type, instance);
-    registerEngineAndSeeder(id, CLHEPengineSeeder{engine});
-    auto const [seed, frozen] = findSeed(id, pset, pnames);
-    engine.setSeed(seed, 0);
-    mf::LogInfo("NuRandomService")
-      << "Seeding " << type << " engine \"" << id.artName()
-      << "\" with seed " << seed << ".";
-    if (frozen) freezeSeed(id, seed);
-    return engine;
-  } // NuRandomService::createEngine(ParameterSet)
+    return
+      createEngine(module, type, instance, readSeedParameter(pset, pnames));
+  }
 
-
-  template <typename Module>
-  std::reference_wrapper<NuRandomService::engine_t>
-  NuRandomService::createEngine(Module& module,
-                                fhicl::ParameterSet const& pset,
-                                std::initializer_list<std::string> pnames)
-  {
-    EngineId id = qualify_engine_label();
-    auto& engine = module.createEngine(0);
-    registerEngineAndSeeder(id, CLHEPengineSeeder{engine});
-    auto const [seed, frozen] = findSeed(id, pset, pnames);
-    engine.setSeed(seed, 0);
-    mf::LogInfo("NuRandomService")
-      << "Seeding default-type engine \"" << id.artName()
-      << "\" with seed " << seed << ".";
-    if (frozen) freezeSeed(id, seed);
-    return engine;
-  } // NuRandomService::createEngine(ParameterSet)
 
 #endif // NURANDOM_RANDOMUTILS_NuRandomService_USECLHEP
 
