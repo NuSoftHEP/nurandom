@@ -13,6 +13,7 @@ art_make(
     cetlib
     cetlib_except
     ${CLHEP}
+    NO_INSTALL
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
     nurandom_RandomUtils_NuRandomService_service
@@ -26,6 +27,7 @@ art_make(
     cetlib
     cetlib_except
     ${CLHEP}
+    NO_INSTALL
   SERVICE_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
     art_Utilities
@@ -38,7 +40,7 @@ art_make(
     cetlib_except
     ${ROOT_CORE}
     ${ROOT_MATHCORE}
-  NO_INSTALL
+    NO_INSTALL
   USE_PRODUCT_NAME
 )
 
@@ -201,4 +203,3 @@ foreach( ServiceManagingTestName ${FailingServiceManagingTests} )
             DATAFILES ${ServiceManagingTestName}.fcl Providers/messageService.fcl Providers/standardMessageDestinations.fcl
           )
 endforeach( ServiceManagingTestName )
-
