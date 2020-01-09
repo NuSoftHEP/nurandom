@@ -25,7 +25,7 @@ namespace rndm {
       struct Global_t {};
       
       /// A constant to select a "global" flavour constructor
-      static Global_t global;
+      static constexpr Global_t global{};
       
       /// Constructor (module name is required)
       EngineId(std::string const& mod, std::string const& inst = std::string()):
