@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nurandom  v1_04_01
+parent nurandom  v1_04_02
 defaultqual     e17
 
 # These optional lines define the installed directories where
@@ -16,7 +16,7 @@ libdir      fq_dir      lib
 bindir      fq_dir      bin
 #
 product         version
-art_root_io     v1_02_01
+art_root_io     v1_03_00
 cetbuildtools   v7_15_01        -        only_for_build
 end_product_list
 
