@@ -13,12 +13,12 @@
 #  make package (builds distribution tarfile)
 # ======================================================================
 
-cmake_minimum_required(VERSION 3.11)  # use cmake 3.11 or later
+cmake_minimum_required(VERSION 3.12)  # use cmake 3.12 or later
 
-project(nurandom)
+project(nurandom VERSION 1.04.01 LANGUAGES CXX)
 
-# cetbuildtools contains our cmake modules
-find_package(cetbuildtools REQUIRED)
+set(fcl_dir job)
+find_package(cetmodules REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH
   $ENV{CANVAS_ROOT_IO_DIR}/Modules
@@ -34,9 +34,8 @@ cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
-find_ups_product(art_root_io)
-find_ups_root()
-find_ups_product( cetbuildtools )
+find_package(art_root_io REQUIRED)
+find_package(ROOT REQUIRED)
 
 # macros
 include(ArtMake)
@@ -47,8 +46,8 @@ add_subdirectory (nurandom)
 add_subdirectory (test)
 
 # ups - table and config files
-add_subdirectory(ups)
-
+#add_subdirectory(ups)
+add_subdirectory(cmakeConfig)
 # packaging utility
-include(UseCPack)
+#include(UseCPack)
 
