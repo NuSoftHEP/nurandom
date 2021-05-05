@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent nurandom  v1_05_02
+parent nurandom  v1_06_00
 defaultqual     e19
 
 # These optional lines define the installed directories where
