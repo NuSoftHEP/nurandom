@@ -18,6 +18,7 @@
 #include "art/Framework/Core/ModuleMacros.h"
 #include "art/Framework/Principal/SubRun.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
+#include "art/Framework/Services/Registry/ServiceDefinitionMacros.h"
 
 // forward declarations
 namespace art { class SubRun; }
