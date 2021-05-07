@@ -16,8 +16,8 @@ libdir      fq_dir      lib
 bindir      fq_dir      bin
 #
 product         version
-art_root_io     v1_07_00
-cetbuildtools   v8_07_00        -        only_for_build
+art_root_io     v1_08_00
+cetbuildtools   v8_07_02        -        only_for_build
 end_product_list
 
 
