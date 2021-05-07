@@ -40,7 +40,7 @@
 // utility libraries
 #include "fhiclcpp/ParameterSet.h"
 #include "fhiclcpp/intermediate_table.h"
-#include "fhiclcpp/make_ParameterSet.h"
+//#include "fhiclcpp/make_ParameterSet.h"
 #include "fhiclcpp/parse.h"
 #include "fhiclcpp/exception.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
@@ -157,7 +157,8 @@ void StartMessageFacility(fhicl::ParameterSet const& pset) {
     } // destinations
     statistics: cout
     )";
-    fhicl::make_ParameterSet(MessageFacilityConfiguration, mf_pset);
+    //fhicl::make_ParameterSet(MessageFacilityConfiguration, mf_pset);
+    mf_pset = fhicl::ParameterSet::make(MessageFacilityConfiguration);
     std::cout << "Using default message facility configuration:\n"
       << mf_pset.to_indented_string(1) << std::endl;
   } // if no configuration is available
@@ -289,11 +290,12 @@ int main(int argc, const char** argv) {
 
   // parse a configuration file; obtain intermediate form
   fhicl::intermediate_table table;
-  fhicl::parse_document(config_path, policy, table);
+  table = fhicl::parse_document(config_path, policy);
   
   // translate into a parameter set
   fhicl::ParameterSet global_pset;
-  fhicl::make_ParameterSet(table, global_pset);
+  //fhicl::make_ParameterSet(table, global_pset);
+  global_pset = fhicl::ParameterSet::make(table);
   
   // initialize the message facility
   StartMessageFacility(global_pset);
