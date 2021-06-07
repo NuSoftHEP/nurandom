@@ -13,14 +13,16 @@
 #  make package (builds distribution tarfile)
 # ======================================================================
 
-cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
 
-project(nurandom 1.05.03 LANGUAGES CXX)
+project(nurandom LANGUAGES CXX)
 
 # cetbuildtools contains our cmake modules
-find_package(cetmodues REQUIRED)
-find_package(canvas_root_io)
-find_package(art)
+find_package(cetbuildtools REQUIRED)
+
+list(APPEND CMAKE_MODULE_PATH
+  $ENV{CANVAS_ROOT_IO_DIR}/Modules
+  $ENV{ART_DIR}/Modules)
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -45,8 +47,8 @@ add_subdirectory (nurandom)
 add_subdirectory (test)
 
 # ups - table and config files
-#add_subdirectory(ups)
-add_subdirectory(cmakeConfig)
+add_subdirectory(ups)
+
 # packaging utility
-#include(UseCPack)
+include(UseCPack)
 
