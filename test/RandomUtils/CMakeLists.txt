@@ -12,7 +12,7 @@ art_make(
     ${FHICLCPP}
     cetlib
     cetlib_except
-    ${CLHEP}
+    ${CLHEP_LIBRARIES}
     NO_INSTALL
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
@@ -26,7 +26,7 @@ art_make(
     ${FHICLCPP}
     cetlib
     cetlib_except
-    ${CLHEP}
+    ${CLHEP_LIBRARIES}
     NO_INSTALL
   SERVICE_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
@@ -38,8 +38,8 @@ art_make(
     ${FHICLCPP}
     cetlib
     cetlib_except
-    ${ROOT_CORE}
-    ${ROOT_MATHCORE}
+    ROOT::Core
+    ROOT::MathCore
     NO_INSTALL
   USE_PRODUCT_NAME
 )
