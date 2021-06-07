@@ -13,7 +13,7 @@ art_make(
     fhiclcpp
     cetlib
     cetlib_except
-    ${ROOT_CORE}
+    ROOT::Core
   PLUGIN_LIBRARIES
     art_Framework_Core
     art_Persistency_Provenance
@@ -22,10 +22,9 @@ art_make(
     fhiclcpp
     cetlib
     cetlib_except
-    ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
+    Boost::filesystem
+    Boost::system
 )
 
-install_source()
 install_headers()
 install_fhicl()
