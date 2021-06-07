@@ -1,0 +1,8 @@
+find_package( ROOT REQUIRED COMPONENTS MathCore Geom GeomPainter GX11 EG EGPythia6 Gui)
+find_package( art REQUIRED)
+find_package( art_root_io REQUIRED)
+find_package( cetlib REQUIRED)
+find_package( cetlib_except REQUIRED)
+find_package( nusimdata REQUIRED )
+find_package( Geant4 REQUIRED)
+
