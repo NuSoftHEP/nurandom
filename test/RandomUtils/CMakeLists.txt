@@ -7,7 +7,7 @@ art_make(
     ${ART_FRAMEWORK_CORE}
     ${ART_FRAMEWORK_UTILITIES}
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
-    messagefacility::MFMessageLogger
+    messagefacility::MF_MessageLogger
     messagefacility::headers
     fhiclcpp::fhiclcpp fhiclcpp::types
     cetlib
@@ -21,7 +21,7 @@ art_make(
     ${ART_FRAMEWORK_PRINCIPAL}
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
-    messagefacility::MFMessageLogger
+    messagefacility::MF_MessageLogger
     messagefacility::headers
     fhiclcpp::fhiclcpp fhiclcpp::types
     cetlib
@@ -33,7 +33,7 @@ art_make(
     art_Utilities
     canvas
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
-    messagefacility::MFMessageLogger
+    messagefacility::MF_MessageLogger
     messagefacility::headers
     fhiclcpp::fhiclcpp fhiclcpp::types
     cetlib
