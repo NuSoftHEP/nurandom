@@ -34,6 +34,7 @@ cet_report_compiler_flags()
 find_ups_product(art_root_io)
 find_ups_product( clhep )
 find_ups_root()
+find_package(messagefacility)
 
 # macros
 include(ArtMake)
