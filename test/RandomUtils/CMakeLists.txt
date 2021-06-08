@@ -12,7 +12,7 @@ art_make(
     fhiclcpp::fhiclcpp fhiclcpp::types
     cetlib
     cetlib_except
-    ${CLHEP}
+    
     NO_INSTALL
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
@@ -26,7 +26,7 @@ art_make(
     fhiclcpp::fhiclcpp fhiclcpp::types
     cetlib
     cetlib_except
-    ${CLHEP}
+    
     NO_INSTALL
   SERVICE_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
