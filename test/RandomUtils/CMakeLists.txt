@@ -4,9 +4,9 @@ art_make(
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
   LIB_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
-    ${ART_FRAMEWORK_CORE}
-    ${ART_FRAMEWORK_UTILITIES}
-    ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
+    art::Framwork_Core
+    art::Utilities
+    art::Framework_Services_System_FloatingPointControl_service
     messagefacility::MF_MessageLogger
     messagefacility::headers
     fhiclcpp::fhiclcpp fhiclcpp::types
@@ -17,10 +17,10 @@ art_make(
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
     nurandom_RandomUtils_NuRandomService_service
-    ${ART_FRAMEWORK_CORE}
-    ${ART_FRAMEWORK_PRINCIPAL}
-    ${ART_FRAMEWORK_SERVICES_REGISTRY}
-    ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
+    art::Framwork_Core
+    art::Framework_Principal
+    art::Framework_Services_Registry
+    art::Framework_Services_System_FloatingPointControl_service
     messagefacility::MF_MessageLogger
     messagefacility::headers
     fhiclcpp::fhiclcpp fhiclcpp::types
@@ -33,7 +33,7 @@ art_make(
     nurandom_RandomUtils_NuRandomService_service
     art_Utilities
     canvas
-    ${ART_FRAMEWORK_SERVICES_REGISTRY}
+    art::Framework_Services_Registry
     messagefacility::MF_MessageLogger
     messagefacility::headers
     fhiclcpp::fhiclcpp fhiclcpp::types
