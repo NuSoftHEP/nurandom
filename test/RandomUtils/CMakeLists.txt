@@ -26,6 +26,7 @@ art_make(
     fhiclcpp::fhiclcpp fhiclcpp::types
     cetlib
     cetlib_except
+    CLHEP::Random
     
     NO_INSTALL
   SERVICE_LIBRARIES
@@ -40,6 +41,7 @@ art_make(
     cetlib_except
     ${ROOT_CORE}
     ${ROOT_MATHCORE}
+    CLHEP::Random
     NO_INSTALL
   USE_PRODUCT_NAME
 )
