@@ -4,7 +4,7 @@ art_make(
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
   LIB_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
-    art::Framwork_Core
+    art::Framework_Core
     art::Utilities
     art::Framework_Services_System_FloatingPointControl_service
     messagefacility::MF_MessageLogger
@@ -17,7 +17,7 @@ art_make(
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
     nurandom_RandomUtils_NuRandomService_service
-    art::Framwork_Core
+    art::Framework_Core
     art::Framework_Principal
     art::Framework_Services_Registry
     art::Framework_Services_System_FloatingPointControl_service
