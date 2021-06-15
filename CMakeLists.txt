@@ -43,6 +43,7 @@ include(BuildPlugins)
 # source
 add_subdirectory (nurandom)
 add_subdirectory (test)
+add_subdirectory (cmakeConfig)
 
 # ups - table and config files
 if(WANT_UPS)
