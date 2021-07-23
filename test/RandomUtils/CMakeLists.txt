@@ -4,41 +4,41 @@ art_make(
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
   LIB_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
-    ${ART_FRAMEWORK_CORE}
+    art::Framework_Core
     ${ART_FRAMEWORK_UTILITIES}
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
-    ${MF_MESSAGELOGGER}
+    messagefacility::MF_MessageLogger
     ${MF_UTILITIES}
-    ${FHICLCPP}
-    cetlib
-    cetlib_except
+    fhiclcpp::fhiclcpp
+    cetlib::cetlib
+    cetlib_except::cetlib_except
     ${CLHEP}
     NO_INSTALL
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
     nurandom_RandomUtils_NuRandomService_service
-    ${ART_FRAMEWORK_CORE}
-    ${ART_FRAMEWORK_PRINCIPAL}
-    ${ART_FRAMEWORK_SERVICES_REGISTRY}
+    art::Framework_Core
+    art::Framework_Principal
+    art::Framework_Services_Registry
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
-    ${MF_MESSAGELOGGER}
+    messagefacility::MF_MessageLogger
     ${MF_UTILITIES}
-    ${FHICLCPP}
-    cetlib
-    cetlib_except
+    fhiclcpp::fhiclcpp
+    cetlib::cetlib
+    cetlib_except::cetlib_except
     ${CLHEP}
     NO_INSTALL
   SERVICE_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
-    art_Utilities
-    canvas
-    ${ART_FRAMEWORK_SERVICES_REGISTRY}
-    ${MF_MESSAGELOGGER}
+    art::Utilities
+    canvas::canvas
+    art::Framework_Services_Registry
+    messagefacility::MF_MessageLogger
     ${MF_UTILITIES}
-    ${FHICLCPP}
-    cetlib
-    cetlib_except
-    ${ROOT_CORE}
+    fhiclcpp::fhiclcpp
+    cetlib::cetlib
+    cetlib_except::cetlib_except
+    ROOT::Core
     ${ROOT_MATHCORE}
     NO_INSTALL
   USE_PRODUCT_NAME

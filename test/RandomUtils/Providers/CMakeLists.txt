@@ -2,13 +2,13 @@
 cet_test( SeedMaster_test
   NO_AUTO
   LIBRARIES
-    art_Utilities
-    canvas
-    ${MF_MESSAGELOGGER}
+    art::Utilities
+    canvas::canvas
+    messagefacility::MF_MessageLogger
     ${MF_UTILITIES}
-    ${FHICLCPP}
-    cetlib
-    cetlib_except
+    fhiclcpp::fhiclcpp
+    cetlib::cetlib
+    cetlib_except::cetlib_except
 )
 
 
