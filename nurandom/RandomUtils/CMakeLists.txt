@@ -3,25 +3,25 @@ add_subdirectory(Providers)
 art_make(
   SERVICE_LIBRARIES
     art_Framework_Core
-    art_Framework_Principal
-    art_Framework_Services_Registry
-    art_Persistency_Provenance
-    art_Utilities
-    art_Framework_Services_Optional_RandomNumberGenerator_service
-    canvas
+    art::Framework_Principal
+    art::Framework_Services_Registry
+    art::Persistency_Provenance
+    art::Utilities
+    art::Framework_Services_Optional_RandomNumberGenerator_service
+    canvas::canvas
     MF_MessageLogger
     fhiclcpp
-    cetlib
-    cetlib_except
-    ${ROOT_CORE}
+    cetlib::cetlib
+    cetlib_except::cetlib_except
+    ROOT::Core
   PLUGIN_LIBRARIES
     art_Framework_Core
-    art_Persistency_Provenance
-    canvas
+    art::Persistency_Provenance
+    canvas::canvas
     MF_MessageLogger
     fhiclcpp
-    cetlib
-    cetlib_except
+    cetlib::cetlib
+    cetlib_except::cetlib_except
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
 )
