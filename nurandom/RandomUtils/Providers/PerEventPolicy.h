@@ -14,8 +14,6 @@
 
 // C/C++ standard libraries
 #include <string>
-#include <sstream>
-#include <ostream> // std::endl
 #include <type_traits> // std::make_signed<>
 
 // From art and its tool chain
@@ -175,10 +173,10 @@ namespace rndm {
     std::string PerEventPolicy<SEED>::UniqueEventIDString
       (EventData_t const& info)
     {
-      std::ostringstream sstr;
-      sstr << "Run: " << info.runNumber << " Subrun: " << info.subRunNumber
-        << " Event: " << info.eventNumber;
-      return sstr.str();
+      return "Run: " + std::to_string(info.runNumber)
+        + " Subrun: " + std::to_string(info.subRunNumber)
+        + " Event: "  + std::to_string(info.eventNumber)
+        ;
     } // PerEventPolicy<SEED>::UniqueEventIDString()
     
     
@@ -186,9 +184,8 @@ namespace rndm {
     std::string PerEventPolicy<SEED>::UniqueEventString
       (EventData_t const& info)
     {
-      std::ostringstream sstr;
-      sstr << " Timestamp: " << info.time;
-      return UniqueEventIDString(info) + sstr.str();
+      return UniqueEventIDString(info)
+        + " Timestamp: " + std::to_string(info.time);
     } // PerEventPolicy<SEED>::UniqueEventString()
     
     
