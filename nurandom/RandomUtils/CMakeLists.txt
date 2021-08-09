@@ -2,6 +2,7 @@ add_subdirectory(Providers)
 
 art_make(
   SERVICE_LIBRARIES
+    nurandom_RandomUtils_Providers
     art_Framework_Core
     art_Framework_Principal
     art_Framework_Services_Registry
@@ -13,7 +14,7 @@ art_make(
     fhiclcpp
     cetlib
     cetlib_except
-    ${ROOT_CORE}
+    ROOT::Core
   PLUGIN_LIBRARIES
     art_Framework_Core
     art_Persistency_Provenance
