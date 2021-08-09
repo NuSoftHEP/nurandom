@@ -21,24 +21,14 @@
 #include "canvas/Utilities/Exception.h"
 
 // Some helper classes
+#include "nurandom/RandomUtils/Providers/PolicyFactory.h" // makeRandomSeedPolicy
+#include "nurandom/RandomUtils/Providers/PolicyNames.h" // rndm::details::Policy
 #include "nurandom/RandomUtils/Providers/MapKeyIterator.h"
 #include "nurandom/RandomUtils/Providers/EngineId.h"
 #include "nurandom/RandomUtils/Providers/Policies.h"
 #include "nurandom/RandomUtils/Providers/EventSeedInputData.h"
 
 // more headers included in the implementation section below
-
-
-// The master list of all the policies
-#define SEED_SERVICE_POLICIES                   \
-  SEED_SERVICE_POLICY(unDefined)                \
-  SEED_SERVICE_POLICY(autoIncrement)            \
-  SEED_SERVICE_POLICY(linearMapping)            \
-  SEED_SERVICE_POLICY(preDefinedOffset)         \
-  SEED_SERVICE_POLICY(preDefinedSeed)           \
-  SEED_SERVICE_POLICY(random)                   \
-  SEED_SERVICE_POLICY(perEvent)                 \
-  /**/
 
 
 namespace rndm {
@@ -257,11 +247,8 @@ namespace rndm {
     /// An invalid seed
     static constexpr seed_t InvalidSeed = PolicyImpl_t::InvalidSeed;
     
-    enum Policy {
-#define SEED_SERVICE_POLICY(x) x,
-      SEED_SERVICE_POLICIES
-#undef SEED_SERVICE_POLICY
-    };
+    /// Enumeration of the available policies.
+    using Policy = details::Policy;
     
     static const std::vector<std::string>& policyNames();
     
@@ -438,20 +425,8 @@ namespace rndm {
 
 //----------------------------------------------------------------------------
 template <typename SEED>
-std::vector<std::string> const& rndm::SeedMaster<SEED>::policyNames() {
-  static std::vector<std::string> names;
-  if(names.empty()) {
-    const char *cnames[] = {
-#define SEED_SERVICE_POLICY(x) #x,
-      SEED_SERVICE_POLICIES
-#undef SEED_SERVICE_POLICY
-    };
-    names = std::vector<std::string>
-      (cnames, cnames + sizeof(cnames)/sizeof(cnames[0]));
-  }
-
-  return names;
-} // SeedMaster<SEED>::policyNames()
+std::vector<std::string> const& rndm::SeedMaster<SEED>::policyNames()
+  { return details::policyNames(); }
 
 
 
@@ -459,41 +434,14 @@ std::vector<std::string> const& rndm::SeedMaster<SEED>::policyNames() {
 template <typename SEED>
 rndm::SeedMaster<SEED>::SeedMaster(fhicl::ParameterSet const& pSet):
   verbosity(pSet.get<int>("verbosity",0)),
-  policy(unDefined),
+  policy(Policy::unDefined),
   configuredSeeds(),
   knownEventSeeds(),
   currentSeeds(),
   engineData()
 {
   
-  // Throw if policy is not recognized.
-  const std::string strPolicy = pSet.get<std::string>("policy");
-  setPolicy(strPolicy);
-  
-  // Finish parsing the parameter set, as required by the selected policy
-  switch(policy) {
-  case autoIncrement:
-    policy_impl.reset(new details::AutoIncrementPolicy<seed_t>(pSet));
-    break;
-  case linearMapping:
-    policy_impl.reset(new details::LinearMappingPolicy<seed_t>(pSet));
-    break;
-  case preDefinedOffset:
-    policy_impl.reset(new details::PredefinedOffsetPolicy<seed_t>(pSet));
-    break;
-  case preDefinedSeed:
-    policy_impl.reset(new details::PredefinedSeedPolicy<seed_t>(pSet));
-    break;
-  case random:
-    policy_impl.reset(new details::RandomPolicy<seed_t>(pSet));
-    break;
-  case perEvent:
-    policy_impl.reset(new details::PerEventPolicy<seed_t>(pSet));
-    break;
-  default:
-    throw art::Exception(art::errors::LogicError)
-      << "SeedMaster(): Internal error: unknown policy_ value";
-  } // switch
+  policy_impl = std::move(details::makeRandomSeedPolicy<seed_t>(pSet).ptr);
   
   if ( verbosity > 0 )
     print(mf::LogVerbatim("SeedMaster"));
@@ -733,23 +681,8 @@ inline void rndm::SeedMaster<SEED>::onNewEvent() {
 template <typename SEED>
 void rndm::SeedMaster<SEED>::setPolicy(std::string policyName) {
   
-  std::vector<std::string>::const_iterator iter
-    = std::find(policyNames().begin(), policyNames().end(), policyName);
-  if (iter != policyNames().end()) {
-    policy = Policy(std::distance(policyNames().begin(), iter));
-  }
+  policy = details::policyFromName(policyName);
   
-  if (policy == unDefined) {
-    std::ostringstream os;
-    os<< "NuRandomService::setPolicy(): Unrecognized policy: "
-      << policyName
-      << "\n Known policies are: ";
-    
-    std::copy(policyNames().begin(), policyNames().end(),
-      std::ostream_iterator<std::string>(os, ", "));
-    
-    throw art::Exception(art::errors::Configuration) << os.str();
-  }
 } // SeedMaster<SEED>::setPolicy()
 
 
