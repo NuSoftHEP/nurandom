@@ -14,6 +14,7 @@
 
 // C/C++ standard libraries
 #include <string>
+#include <memory> // std::unique_ptr<>
 #include <type_traits> // std::make_signed<>
 
 // From art and its tool chain
@@ -22,6 +23,7 @@
 #include "canvas/Utilities/Exception.h"
 
 // Some helper classes
+#include "nurandom/RandomUtils/Providers/PolicyFactory.h" // makeRandomSeedPolicy
 #include "nurandom/RandomUtils/Providers/RandomSeedPolicyBase.h"
 #include "nurandom/RandomUtils/Providers/EngineId.h"
 #include "nurandom/RandomUtils/Providers/EventSeedInputData.h"
@@ -38,6 +40,39 @@ namespace rndm {
      * event.
      * The information that enters the seed is the event ID
      * (run, subrun, event), the process name, and the engine ID.
+     * 
+     * The policy is only effective if an event is being processed.
+     * Before the first event is processed, seeds are initialized to a fixed
+     * value, while in between the events they are not modified and the random
+     * numbers extracted at that time will depend on which event was processed
+     * last.
+     * 
+     * As a partial mitigation to this, it is possible to specify a "pre-event"
+     * policy that is used to initialize the random engines on construction,
+     * just like the policies which do not depend on the event (like
+     * `autoIncrement` and `random`) do. This is achieved by specifying in the
+     * `preEventPolicy` configuration table the whole configuration of this
+     * "fallback" policy. For example:
+     * ~~~~
+     *   NuRandomService: {
+     *     policy            : "perEvent"
+     *     
+     *     preEventPolicy: {
+     *       policy            : "preDefinedSeed"
+     *       baseSeed          :     1
+     *       maxUniqueEngines  :     6
+     *       checkRange        :  true
+     *       Module1: { a : 3  b : 5 }
+     *       Module2: { a : 7  c : 9 }
+     *     } # preEventPolicy
+     *     
+     *     verbosity         :     2
+     *     endOfJobSummary   :  false
+     * 
+     *   }
+     * ~~~~
+     * sets up the `perEvent` policy, and uses a `preDefinedSeed` for the seeds
+     * before the first event.
      */
     template <typename SEED>
     class PerEventPolicy: public RandomSeedPolicyBase<SEED> {
@@ -103,6 +138,7 @@ namespace rndm {
       
       
         private:
+      
       /// type for seed offset
       using SeedOffset_t = typename std::make_signed<seed_t>::type;
       
@@ -110,9 +146,11 @@ namespace rndm {
       
       SeedOffset_t offset; ///< offset added to all the seeds
       
-      /// Per-job seed: invalid seeds are returned
-      virtual seed_t createSeed(SeedMasterHelper::EngineId const&) override
-        { return base_t::InvalidSeed; }
+      /// Policy used for initialization before the event (none by default).
+      PolicyStruct_t<seed_t> preEventPolicy;
+      
+      /// Per-job seed: pre-event seeds are returned (or invalid if none).
+      virtual seed_t createSeed(SeedMasterHelper::EngineId const& id) override;
       
       /**
        * @brief Returns a seed proper for the specified event information
@@ -213,7 +251,7 @@ namespace rndm {
     //--------------------------------------------------------------------------
     template <typename SEED>
     void PerEventPolicy<SEED>::configure(fhicl::ParameterSet const& pset) {
-      // set the algorithm
+      // set the per-event algorithm
       algo = saUndefined;
       std::string algorithm_name
          = pset.get<std::string>("algorithm", "default");
@@ -236,6 +274,22 @@ namespace rndm {
       
       // EventTimestamp_v1 does not require specific configuration
       
+      
+      // set the pre-event algorithm
+      auto const& preEventConfig
+        = pset.get<fhicl::ParameterSet>("preEventPolicy", {});
+      if (!preEventConfig.is_empty()) {
+        try {
+          preEventPolicy = makeRandomSeedPolicy<seed_t>(preEventConfig);
+        }
+        catch(cet::exception const& e) {
+          throw cet::exception{ "PerEventPolicy", "", e }
+            << "Error creating the pre-event policy of `perEvent` random policy"
+            " from configuration:\n"
+            << preEventConfig.to_indented_string(2);
+        }
+      } // if pre-event policy
+      
     } // PerEventPolicy<SEED>::configure()
     
     
@@ -248,7 +302,21 @@ namespace rndm {
         << "\n  algorithm version: " << algoNames[algo];
       if (offset != 0)
         out << "\n  constant offset:   " << offset;
+      if (preEventPolicy) {
+        out << "\n  special policy for random seeds before the event: '"
+          << policyName(preEventPolicy.policy)
+          << "'\n" << std::string(60, '-');
+        preEventPolicy->print(out);
+        out << "\n" << std::string(60, '-');
+      }
     } // PerEventPolicy<SEED>::print()
+    
+    
+    //--------------------------------------------------------------------------
+    template <typename SEED>
+    typename PerEventPolicy<SEED>::seed_t PerEventPolicy<SEED>::createSeed
+      (SeedMasterHelper::EngineId const& id)
+    { return preEventPolicy? preEventPolicy->getSeed(id): base_t::InvalidSeed; }
     
     
     //--------------------------------------------------------------------------

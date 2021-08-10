@@ -42,6 +42,7 @@ set( SuccessfulSeedMasterTests
   PredefinedSeedErr03
   Random01
   Random02
+  PerEventPreEvent_preDefinedSeed_01
   )
 foreach( SeedMasterTestName ${SuccessfulSeedMasterTests} )
   cet_test( SeedMaster_test${SeedMasterTestName} HANDBUILT
