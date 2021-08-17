@@ -29,7 +29,7 @@ services :
   NuRandomService: {
     policy            : "perEvent"
     
-    preEventPolicy: {
+    initSeedPolicy: {
       policy            : "preDefinedSeed"
       baseSeed          :     1
       maxUniqueEngines  :     6
@@ -45,7 +45,7 @@ services :
         c : 9
       }
       
-    } # preEventPolicy
+    } # initSeedPolicy
     
     verbosity         :     2
     endOfJobSummary   :  false
