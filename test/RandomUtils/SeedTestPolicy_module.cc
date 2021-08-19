@@ -79,7 +79,7 @@ namespace testing {
     std::vector<std::string> instanceNames;
     std::map<std::string, seed_t> startSeeds; ///< seeds after the constructor
     unsigned int nExpectedErrors; ///< number of expected errors
-    bool useGenerators; ///< instanciate and use random number generators
+    bool useGenerators; ///< instantiate and use random number generators
     bool perEventSeeds; ///< whether we expect different seeds on each event
     std::string const moduleLabel; ///< configured module label
 

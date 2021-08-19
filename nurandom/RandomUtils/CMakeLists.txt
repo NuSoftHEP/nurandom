@@ -2,6 +2,7 @@ add_subdirectory(Providers)
 
 art_make(
   SERVICE_LIBRARIES
+    nurandom_RandomUtils_Providers
     art_Framework_Core
     art::Framework_Principal
     art::Framework_Services_Registry
