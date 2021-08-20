@@ -2,6 +2,7 @@
 cet_test( SeedMaster_test
   NO_AUTO
   LIBRARIES
+    nurandom_RandomUtils_Providers
     art::Utilities
     canvas::canvas
     messagefacility::MF_MessageLogger
