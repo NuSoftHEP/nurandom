@@ -10,7 +10,7 @@ art_make(
     art::Utilities
     art::Framework_Services_Optional_RandomNumberGenerator_service
     canvas::canvas
-    MF_MessageLogger
+    messagefacility::MF_MessageLogger
     fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
@@ -19,7 +19,7 @@ art_make(
     art_Framework_Core
     art::Persistency_Provenance
     canvas::canvas
-    MF_MessageLogger
+    messagefacility::MF_MessageLogger
     fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except

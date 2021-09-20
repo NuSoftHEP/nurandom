@@ -8,11 +8,11 @@ art_make(
     ${ART_FRAMEWORK_UTILITIES}
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
     messagefacility::MF_MessageLogger
-    ${MF_UTILITIES}
+    
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    ${CLHEP}
+    CLHEP
     NO_INSTALL
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
@@ -22,11 +22,11 @@ art_make(
     art::Framework_Services_Registry
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
     messagefacility::MF_MessageLogger
-    ${MF_UTILITIES}
+    
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    ${CLHEP}
+    CLHEP
     NO_INSTALL
   SERVICE_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
@@ -34,12 +34,12 @@ art_make(
     canvas::canvas
     art::Framework_Services_Registry
     messagefacility::MF_MessageLogger
-    ${MF_UTILITIES}
+    
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
     ROOT::Core
-    ${ROOT_MATHCORE}
+    ROOT::MathCore
     NO_INSTALL
   USE_PRODUCT_NAME
 )

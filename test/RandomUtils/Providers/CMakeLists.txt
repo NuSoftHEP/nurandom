@@ -6,7 +6,7 @@ cet_test( SeedMaster_test
     art::Utilities
     canvas::canvas
     messagefacility::MF_MessageLogger
-    ${MF_UTILITIES}
+    
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
