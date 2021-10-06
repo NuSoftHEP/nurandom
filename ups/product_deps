@@ -14,6 +14,7 @@ defaultqual     e20
 incdir      product_dir include
 libdir      fq_dir      lib
 bindir      fq_dir      bin
+fcldir      product_dir fcl
 #
 product         version
 art_root_io     v1_08_03
