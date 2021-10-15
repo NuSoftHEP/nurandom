@@ -4,7 +4,6 @@ find_package(ROOT COMPONENTS Core REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 
 cet_build_plugin(NuRandomService art::service
-  SOURCE NuRandomService_service.cc
   LIBRARIES
     nurandom_RandomUtils_Providers
     art::Framework_Core
@@ -20,7 +19,6 @@ cet_build_plugin(NuRandomService art::service
     cetlib_except::cetlib_except
     ROOT::Core)
 cet_build_plugin(GeneratedEventTimestamp art::plugin
-  SOURCE GeneratedEventTimestamp_plugin.cc
   LIBRARIES
     art::Framework_Core
     art::Persistency_Provenance
