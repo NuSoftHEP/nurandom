@@ -19,7 +19,7 @@ cet_build_plugin(NuRandomService art::service
     cetlib_except::cetlib_except
     ROOT::Core)
 cet_build_plugin(GeneratedEventTimestamp art::plugin
-  LIBRARIES
+  LIBRARIES PRIVATE
     art::Framework_Core
     art::Persistency_Provenance
     canvas::canvas
