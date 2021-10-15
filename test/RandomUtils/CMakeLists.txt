@@ -14,7 +14,7 @@ art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    CLHEP
+    CLHEP::CLHEP
     NO_INSTALL
   MODULE_LIBRARIES
     nurandom_test_RandomUtils
@@ -28,7 +28,7 @@ art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    CLHEP
+    CLHEP::CLHEP
     NO_INSTALL
   SERVICE_LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
