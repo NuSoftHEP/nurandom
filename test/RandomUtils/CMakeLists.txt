@@ -1,5 +1,7 @@
 add_subdirectory(Providers)
 
+find_package(ROOT COMPONENTS Core MathCore REQUIRED PRIVATE)
+
 art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary(), simple_plugin() with explicit source lists
   EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
   LIB_LIBRARIES

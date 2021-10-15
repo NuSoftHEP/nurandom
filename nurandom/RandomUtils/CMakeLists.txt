@@ -1,5 +1,8 @@
 add_subdirectory(Providers)
 
+find_package(ROOT COMPONENTS Core REQUIRED)
+find_package(Boost COMPONENTS filesystem REQUIRED)
+
 art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary(), simple_plugin() with explicit source lists
   SERVICE_LIBRARIES
     nurandom_RandomUtils_Providers
@@ -23,8 +26,7 @@ art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary
     fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
+    Boost::filesystem
 )
 
 install_source()
