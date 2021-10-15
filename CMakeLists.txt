@@ -14,27 +14,21 @@
 # ======================================================================
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-
 find_package(cetmodules 2.29.06 REQUIRED)
 project(nurandom VERSION 1.07.06 LANGUAGES CXX)
-
-list(APPEND CMAKE_MODULE_PATH ### MIGRATE-ACTION-REQUIRED: remove
-  $ENV{CANVAS_ROOT_IO_DIR}/Modules
-  $ENV{ART_DIR}/Modules)
 
 include(CetCMakeEnv)
 cet_cmake_env()
 
 cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
                        NO_UNDEFINED
-                       EXTRA_FLAGS -pedantic
-                       EXTRA_CXX_FLAGS -Wno-unused-local-typedefs -Wno-variadic-macros)
+                       EXTRA_FLAGS -pedantic 
+                                   $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-local-typedefs
+                                                             -Wno-variadic-macros>)
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-# these are minimum required versions, not the actual product versions
-find_ups_product(art_root_io) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
-find_ups_product( clhep ) ### MIGRATE-ACTION-RECOMMENDED: use cet_find_package() with target semantics for linking
-find_ups_root()
+find_package(art_root_io REQUIRED)
+find_package(CLHEP REQUIRED)
 
 # macros
 include(ArtMake)
