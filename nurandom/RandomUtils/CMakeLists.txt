@@ -1,6 +1,6 @@
 add_subdirectory(Providers)
 
-art_make(
+art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary(), simple_plugin() with explicit source lists
   SERVICE_LIBRARIES
     nurandom_RandomUtils_Providers
     art_Framework_Core
