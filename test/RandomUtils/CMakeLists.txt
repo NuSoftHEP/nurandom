@@ -2,50 +2,75 @@ add_subdirectory(Providers)
 
 find_package(ROOT COMPONENTS Core MathCore REQUIRED PRIVATE)
 
-art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary(), simple_plugin() with explicit source lists
-  EXCLUDE GeneratedEventTimestampTestPlugin_plugin.cc
-  LIB_LIBRARIES
+art_make_library(SOURCE SeedTestUtils.cxx
+  LIBRARIES
     nurandom_RandomUtils_NuRandomService_service
     art::Framework_Core
     ${ART_FRAMEWORK_UTILITIES}
     ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
     messagefacility::MF_MessageLogger
-    
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
     CLHEP::CLHEP
     NO_INSTALL
-  MODULE_LIBRARIES
-    nurandom_test_RandomUtils
-    nurandom_RandomUtils_NuRandomService_service
-    art::Framework_Core
-    art::Framework_Principal
-    art::Framework_Services_Registry
-    ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
-    messagefacility::MF_MessageLogger
-    
-    fhiclcpp::fhiclcpp
-    cetlib::cetlib
-    cetlib_except::cetlib_except
-    CLHEP::CLHEP
-    NO_INSTALL
-  SERVICE_LIBRARIES
-    nurandom_RandomUtils_NuRandomService_service
-    art::Utilities
-    canvas::canvas
-    art::Framework_Services_Registry
-    messagefacility::MF_MessageLogger
-    
-    fhiclcpp::fhiclcpp
-    cetlib::cetlib
-    cetlib_except::cetlib_except
-    ROOT::Core
-    ROOT::MathCore
-    NO_INSTALL
-  USE_PRODUCT_NAME
 )
 
+cet_build_plugin(GlobalEngineUserTestService art::service
+  SOURCE GlobalEngineUserTestService_service.cc
+  LIBRARIES nurandom_RandomUtils_NuRandomService_service art::Utilities canvas::canvas
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except ROOT::Core
+  ROOT::MathCore NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(RandomManagerTest art::module
+  SOURCE RandomManagerTest_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(SeedTestPolicy art::module
+  SOURCE SeedTestPolicy_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(SeedTestQuerySeeds art::module
+  SOURCE SeedTestQuerySeeds_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(SeedTestRegisterOnProcessEvent art::module
+  SOURCE SeedTestRegisterOnProcessEvent_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(SeedTestRegisterOnRun art::module
+  SOURCE SeedTestRegisterOnRun_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(SeedTestRegisterOnSubRun art::module
+  SOURCE SeedTestRegisterOnSubRun_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
+cet_build_plugin(ValidatedConfigSeedTest art::module
+  SOURCE ValidatedConfigSeedTest_module.cc
+  LIBRARIES nurandom::test_RandomUtils nurandom_RandomUtils_NuRandomService_service
+  art::Framework_Core art::Framework_Principal
+  art::Framework_Services_Registry messagefacility::MF_MessageLogger
+  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  NO_INSTALL USE_PROJECT_NAME)
 
 #
 # The following tests verify that engine declaration may happen only on

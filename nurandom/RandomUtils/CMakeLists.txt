@@ -3,8 +3,9 @@ add_subdirectory(Providers)
 find_package(ROOT COMPONENTS Core REQUIRED)
 find_package(Boost COMPONENTS filesystem REQUIRED)
 
-art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary(), simple_plugin() with explicit source lists
-  SERVICE_LIBRARIES
+cet_build_plugin(NuRandomService art::service
+  SOURCE NuRandomService_service.cc
+  LIBRARIES
     nurandom_RandomUtils_Providers
     art::Framework_Core
     art::Framework_Principal
@@ -17,8 +18,10 @@ art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    ROOT::Core
-  PLUGIN_LIBRARIES
+    ROOT::Core)
+cet_build_plugin(GeneratedEventTimestamp art::plugin
+  SOURCE GeneratedEventTimestamp_plugin.cc
+  LIBRARIES
     art::Framework_Core
     art::Persistency_Provenance
     canvas::canvas
@@ -26,8 +29,7 @@ art_make( ### MIGRATE-ACTION-RECOMMENDED: use art_make_library(), art_dictionary
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
-    Boost::filesystem
-)
+    Boost::filesystem)
 
 install_source()
 install_headers()
