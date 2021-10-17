@@ -1,10 +1,9 @@
-cet_make( ### MIGRATE-ACTION-RECOMMENDED: use cet_make_library(), build_dictionary(), basic_plugin() with explicit source lists
+cet_make_library(SOURCE PolicyNames.cxx
   LIBRARIES
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
 )
-
 
 install_source()
 install_headers()
