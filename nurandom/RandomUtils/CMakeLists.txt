@@ -5,7 +5,7 @@ find_package(Boost COMPONENTS filesystem REQUIRED)
 
 cet_build_plugin(NuRandomService art::service
   LIBRARIES
-    nurandom_RandomUtils_Providers
+    nurandom::RandomUtils_Providers
     art::Framework_Core
     art::Framework_Principal
     art::Framework_Services_Registry

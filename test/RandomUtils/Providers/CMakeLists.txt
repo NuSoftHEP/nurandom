@@ -2,11 +2,10 @@
 cet_test( SeedMaster_test
   NO_AUTO
   LIBRARIES
-    nurandom_RandomUtils_Providers
+    nurandom::RandomUtils_Providers
     art::Utilities
     canvas::canvas
     messagefacility::MF_MessageLogger
-    
     fhiclcpp::fhiclcpp
     cetlib::cetlib
     cetlib_except::cetlib_except
