@@ -12,31 +12,23 @@
 #  make install
 #  make package (builds distribution tarfile)
 # ======================================================================
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-cmake_minimum_required(VERSION 3.18.2 FATAL_ERROR)
-
-project(nurandom VERSION 1.07.06 LANGUAGES CXX)
-
-# cetbuildtools contains our cmake modules
-find_package(cetbuildtools REQUIRED)
-
-list(APPEND CMAKE_MODULE_PATH
-  $ENV{CANVAS_ROOT_IO_DIR}/Modules
-  $ENV{ART_DIR}/Modules)
+find_package(cetmodules 2.29.06 REQUIRED)
+project(nurandom VERSION 1.08.00 LANGUAGES CXX)
 
 include(CetCMakeEnv)
 cet_cmake_env()
 
 cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
                        NO_UNDEFINED
-                       EXTRA_FLAGS -pedantic
-                       EXTRA_CXX_FLAGS -Wno-unused-local-typedefs -Wno-variadic-macros)
-cet_report_compiler_flags()
+                       EXTRA_FLAGS -pedantic 
+                                   $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-local-typedefs
+                                                             -Wno-variadic-macros>)
+cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-# these are minimum required versions, not the actual product versions
-find_ups_product(art_root_io)
-find_ups_product( clhep )
-find_ups_root()
+find_package(art_root_io REQUIRED)
+find_package(CLHEP REQUIRED)
 
 # macros
 include(ArtMake)
@@ -47,8 +39,7 @@ add_subdirectory (nurandom)
 add_subdirectory (test)
 
 # ups - table and config files
-add_subdirectory(ups)
 
 # packaging utility
-include(UseCPack)
 
+cet_cmake_config()
