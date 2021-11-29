@@ -2,66 +2,90 @@ add_subdirectory(Providers)
 
 find_package(ROOT COMPONENTS Core MathCore REQUIRED PRIVATE)
 
-art_make_library(SOURCE SeedTestUtils.cxx
-  LIBRARIES
-    nurandom::RandomUtils_NuRandomService_service
+cet_make_library(SOURCE SeedTestUtils.cxx
+  LIBRARIES PUBLIC
+    art::Framework_Services_Optional_RandomNumberGenerator_service
     art::Framework_Core
-    ${ART_FRAMEWORK_UTILITIES}
-    ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
-    messagefacility::MF_MessageLogger
-    fhiclcpp::fhiclcpp
-    cetlib::cetlib
-    cetlib_except::cetlib_except
-    CLHEP::CLHEP
+    canvas::canvas
     NO_INSTALL
 )
 
 cet_build_plugin(GlobalEngineUserTestService art::service
-  LIBRARIES nurandom::RandomUtils_NuRandomService_service art::Utilities canvas::canvas
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except ROOT::Core
-  ROOT::MathCore NO_INSTALL)
-cet_build_plugin(RandomManagerTest art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+  LIBRARIES
+    PUBLIC
+    nurandom::RandomUtils_NuRandomService_service
+    fhiclcpp::fhiclcpp
+    ROOT::MathCore
+    PRIVATE
+    art::Framework_Services_Registry
+    art::Persistency_Provenance
+    canvas::canvas
+    messagefacility::MF_MessageLogger
+    ROOT::Core
+    NO_INSTALL
+)
+
+cet_build_plugin(RandomManagerTest art::EDAnalyzer
+  LIBRARIES PRIVATE
+    nurandom::test_RandomUtils
+    nurandom::RandomUtils_NuRandomService_service
+    art::Framework_Core
+    art::Framework_Services_Registry
+    art::Framework_Principal
+    canvas::canvas
+    messagefacility::MF_MessageLogger
+    CLHEP::Random
+    NO_INSTALL
+)
+
+cet_build_plugin(SeedTestPolicy art::EDAnalyzer
+  LIBRARIES PRIVATE
+  nurandom::test_RandomUtils
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Core
+  art::Framework_Principal
+  art::Framework_Services_Registry
+  messagefacility::MF_MessageLogger
+  CLHEP::Random
   NO_INSTALL)
-cet_build_plugin(SeedTestPolicy art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+
+cet_build_plugin(SeedTestQuerySeeds art::EDAnalyzer
+  LIBRARIES PRIVATE
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Services_Registry
   NO_INSTALL)
-cet_build_plugin(SeedTestQuerySeeds art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+
+cet_build_plugin(SeedTestRegisterOnProcessEvent art::EDAnalyzer
+  LIBRARIES PRIVATE
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Services_Registry
+  messagefacility::MF_MessageLogger
+  canvas::canvas
   NO_INSTALL)
-cet_build_plugin(SeedTestRegisterOnProcessEvent art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+
+cet_build_plugin(SeedTestRegisterOnRun art::EDAnalyzer
+  LIBRARIES PRIVATE
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Principal
+  art::Framework_Services_Registry
+  messagefacility::MF_MessageLogger
   NO_INSTALL)
-cet_build_plugin(SeedTestRegisterOnRun art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+
+cet_build_plugin(SeedTestRegisterOnSubRun art::EDAnalyzer
+  LIBRARIES PRIVATE
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Principal
+  art::Framework_Services_Registry
+  messagefacility::MF_MessageLogger
   NO_INSTALL)
-cet_build_plugin(SeedTestRegisterOnSubRun art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
-  NO_INSTALL)
-cet_build_plugin(ValidatedConfigSeedTest art::module
-  LIBRARIES PRIVATE nurandom::test_RandomUtils nurandom::RandomUtils_NuRandomService_service
-  art::Framework_Core art::Framework_Principal
-  art::Framework_Services_Registry messagefacility::MF_MessageLogger
-  fhiclcpp::fhiclcpp cetlib::cetlib cetlib_except::cetlib_except CLHEP::CLHEP
+
+cet_build_plugin(ValidatedConfigSeedTest art::EDAnalyzer
+  LIBRARIES PRIVATE
+  nurandom::RandomUtils_NuRandomService_service
+  art::Framework_Principal
+  art::Framework_Services_Registry
+  messagefacility::MF_MessageLogger
+  canvas::canvas
   NO_INSTALL)
 
 #

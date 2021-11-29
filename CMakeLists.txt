@@ -21,17 +21,21 @@ include(CetCMakeEnv)
 cet_cmake_env()
 
 cet_set_compiler_flags(DIAGS CAUTIOUS WERROR
-                       NO_UNDEFINED
-                       EXTRA_FLAGS -pedantic 
-                                   $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-local-typedefs
-                                                             -Wno-variadic-macros>)
+  NO_UNDEFINED
+  EXTRA_FLAGS -pedantic 
+  $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-local-typedefs
+  -Wno-variadic-macros>)
+
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
-find_package(art_root_io REQUIRED)
-find_package(CLHEP REQUIRED)
+find_package(CLHEP COMPONENTS Random REQUIRED PUBLIC)
+find_package(ROOT COMPONENTS MathCore REQUIRED PUBLIC)
+find_package(art REQUIRED PUBLIC)
+find_package(canvas REQUIRED PUBLIC)
+find_package(cetlib_except REQUIRED PUBLIC)
+find_package(fhiclcpp REQUIRED PUBLIC)
+find_package(messagefacility REQUIRED PUBLIC)
 
-# macros
-include(ArtMake)
 include(BuildPlugins)
 
 # source
