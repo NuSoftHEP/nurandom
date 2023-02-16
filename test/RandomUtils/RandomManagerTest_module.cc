@@ -117,8 +117,9 @@ namespace testing {
       for (std::string const& instanceName: instanceNames) {
         mf::LogInfo("RandomManagerTest") << "Creating a default engine '"
                                        << instanceName << "' in module '" << moduleLabel << "'";
-        CLHEP::HepRandomEngine& engine = EngineManager->createEngine
-          (*this, "HepJamesRandom", instanceName, pset, "Seed_" + instanceName);
+        CLHEP::HepRandomEngine& engine = EngineManager->registerAndSeedEngine(
+           createEngine(0, "HepJamesRandom", instanceName),
+          "HepJamesRandom", instanceName, pset, "Seed_" + instanceName);
       engines.emplace(instanceName, &engine);
     }
 
@@ -127,7 +128,7 @@ namespace testing {
       mf::LogInfo("RandomManagerTest")
         << "Creating a nameless default engine in module '"
         << moduleLabel << "'";
-      CLHEP::HepRandomEngine& engine = EngineManager->createEngine(*this, pset, "Seed");
+      CLHEP::HepRandomEngine& engine = EngineManager->registerAndSeedEngine(createEngine(0), pset, "Seed");
       engines.emplace("", &engine);
     }
 

@@ -53,10 +53,6 @@ namespace evgen {
     /// Returns the time stamp for the specified event
     virtual art::Timestamp eventTimestamp(art::EventID const& id) override;
     
-    /// Resets the status; since this plug in is stateless, this is a no-op
-    virtual void rewind() override {}
-    
-    
       private:
     /// Offset to be added to the chosen clock to get an absolute time.
     art::TimeValue_t const fOffsetFromEpoch = 0;
@@ -331,4 +327,3 @@ art::Timestamp evgen::GeneratedEventTimestamp::eventTimestamp
 
 // make art aware that we have a plugin
 DEFINE_ART_EMPTYEVENTTIMESTAMP_PLUGIN(evgen::GeneratedEventTimestamp)
-

@@ -130,7 +130,7 @@ namespace rndm {
     std::optional<seed_t> const seed /* = std::nullopt */
   ) {
     EngineId id = qualify_engine_label(instance);
-    registerEngineAndSeeder(id, seeder);
+    registerEngineIdAndSeeder(id, seeder);
     auto const [ seedValue, frozen ] = extractSeed(id, seed);
     seedEngine(id); // seed it before freezing
     if (frozen) freezeSeed(id, seedValue);
@@ -274,7 +274,7 @@ namespace rndm {
 
 
   //----------------------------------------------------------------------------
-  void NuRandomService::registerEngineAndSeeder
+  void NuRandomService::registerEngineIdAndSeeder
     (EngineId const& id, SeedMaster_t::Seeder_t seeder)
   {
     // Are we being called from the right place?
@@ -286,7 +286,7 @@ namespace rndm {
         << "' has already been created!\n";
     }
     seeds.registerNewSeeder(id, seeder);
-  } // NuRandomService::registerEngineAndSeeder()
+  } // NuRandomService::registerEngineIdAndSeeder()
 
 
   //----------------------------------------------------------------------------
@@ -298,7 +298,7 @@ namespace rndm {
   NuRandomService::seed_t NuRandomService::prepareEngine
     (EngineId const& id, SeedMaster_t::Seeder_t seeder)
   {
-    registerEngineAndSeeder(id, seeder);
+    registerEngineIdAndSeeder(id, seeder);
     return querySeed(id);
   } // NuRandomService::prepareEngine()
 
@@ -392,4 +392,3 @@ namespace rndm {
   //----------------------------------------------------------------------------
 
 } // end namespace rndm
-

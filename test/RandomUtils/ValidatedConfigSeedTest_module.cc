@@ -83,12 +83,12 @@ class testing::ValidatedConfigSeedTest: public art::EDAnalyzer {
 testing::ValidatedConfigSeedTest::ValidatedConfigSeedTest
   (Parameters const& config)
   : art::EDAnalyzer(config)
-  , fEngineOne(art::ServiceHandle<rndm::NuRandomService>()->createEngine
-      (*this, "HepJamesRandom", "one", config().SeedOne))
-  , fEngineTwo(art::ServiceHandle<rndm::NuRandomService>()->createEngine
-      (*this, "HepJamesRandom", "two", config().SeedTwo))
-  , fEngineThree(art::ServiceHandle<rndm::NuRandomService>()->createEngine
-      (*this, "HepJamesRandom", "three"))
+  , fEngineOne(art::ServiceHandle<rndm::NuRandomService>()->registerAndSeedEngine
+               (createEngine(0, "HepJamesRandom", "one"), "HepJamesRandom", "one", config().SeedOne))
+  , fEngineTwo(art::ServiceHandle<rndm::NuRandomService>()->registerAndSeedEngine
+               (createEngine(0, "HepJamesRandom", "two"), "HepJamesRandom", "two", config().SeedTwo))
+  , fEngineThree(art::ServiceHandle<rndm::NuRandomService>()->registerAndSeedEngine
+                 (createEngine(0, "HepJamesRandom", "three"), "HepJamesRandom", "three"))
 {
 
   auto const& randomService = *(art::ServiceHandle<rndm::NuRandomService>());

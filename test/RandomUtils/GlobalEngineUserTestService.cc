@@ -23,7 +23,7 @@
 
 // ROOT
 #include "TClass.h"
-#include "TRandom3.h"
+#include "TRandom.h"
 
 
 //------------------------------------------------------------------------------
@@ -47,12 +47,12 @@ testing::GlobalEngineUserTestService::GlobalEngineUserTestService
       << "Using a default engine instance name: '" << instanceNames.back()
       << "'";
   }
-  
+
   //
   // create all our engines (uninteresting temporary seeds are set)
   //
   for (std::string instanceName: instanceNames) {
-    engines.emplace_back(std::make_unique<TRandom3>());
+    engines.emplace_back(std::make_unique<TRandom>());
     engines.back()->SetTitle(instanceName.c_str());
   } // for
 
