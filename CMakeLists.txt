@@ -15,7 +15,7 @@
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 find_package(cetmodules 2.29.06 REQUIRED)
-project(nurandom VERSION 1.09.00 LANGUAGES CXX)
+project(nurandom VERSION 1.10.00 LANGUAGES CXX)
 
 include(CetCMakeEnv)
 cet_cmake_env()
