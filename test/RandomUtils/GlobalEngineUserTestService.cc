@@ -60,8 +60,6 @@ testing::GlobalEngineUserTestService::GlobalEngineUserTestService
   // register all the engines
   //
   rndm::NuRandomService& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
-  // NuRandomService::createEngine() can't be called here
-  //   because it needs a EngineCreator: good
   
   for (auto& engine: engines) {
     

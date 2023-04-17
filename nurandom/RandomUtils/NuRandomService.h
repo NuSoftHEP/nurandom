@@ -4,7 +4,6 @@
  * @author Gianluca Petrillo (petrillo@fnal.gov), Rob Kutschke (kutschke@fnal.gov)
  * @date   2013/03/14 19:54:49
  * @see NuRandomService_service.cc
- *
  */
 
 
@@ -68,8 +67,6 @@ namespace rndm {
   /// Type of FHiCL parameter to be used to read a random seed.
   using SeedAtom = fhicl::OptionalAtom<seed_t>;
 
-
-
   /**
    * @brief An art service to assist in the distribution of guaranteed unique
    * seeds to all engines within an art job.
@@ -121,16 +118,12 @@ namespace rndm {
    *
    * Registration must happen in art module constructor, in one of the following
    * ways:
-   *  * by asking this service to create an engine via
-   *    `art::RandomNumberGenerator` (see `createEngine()` methods)
-   *    [discouraged]
    *  * by registering an existing engine and its seeding function
-   *    (see `registerEngine()` methods)
+   *    (see `registerAndSeedEngine()` and `registerEngine()` methods)
    *  * by just declaring that an engine exists
    *    (see `declareEngine()` and `getSeed()` methods)
-   * The first method and, when a seeder or an engine is provided, also the
-   * second method, set the seed of the engine they register (see below).
-   * In the third case, it is generally the caller's responsibility to seed the
+   * The first methods set the seed of the engine they register (see below).
+   * In the second case, it is generally the caller's responsibility to seed the
    * engine. The registration of an engine which has been only declared can be
    * "completed" by calling `defineEngine()` to provide the actual seeder for
    * that engine. The pair of calls `declareEngine()`/`defineEngine()` (or
@@ -138,14 +131,10 @@ namespace rndm {
    * `registerEngine()`, with the added flexibility of having the seed for the
    * engine already available before the registration is completed.
    *
-   * The use of `createEngine()` class of function is discouraged and this
-   * function might be removed in the future, because of its non-clean use of
-   * module interfaces.
-   * The recommended approach is more prolix; here an example for an engine with
-   * a non-default instance name:
+   * Here is an example for an engine with a non-default instance name:
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
    * std::string const instanceName = "instanceName";
-   * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+   * auto& Seeds = *art::ServiceHandle<rndm::NuRandomService>();
    *
    * // declare an engine; NuRandomService associates an (unknown) engine, in
    * // the current module and an instance name, with a seed (returned)
@@ -157,10 +146,11 @@ namespace rndm {
    * // finally, complete the registration; seed will be set again
    * Seeds.defineEngine(engine);
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   * This is equivalent to the discouraged call
+   * This is equivalent to the call
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
    * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
-   * Seeds.createEngine(*this, "HepJamesRandom", "instanceName");
+   * Seeds.registerAndSeedEngine(createEngine(0, "HepJamesRandom", "instanceName"),
+   *                             "HepJamesRandom", "instanceName");
    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * Please read carefully the documentation of the method of your choice, since
    * they have different requirements and apply to different usage patterns.
@@ -175,7 +165,7 @@ namespace rndm {
    *
    * `rndm::NuRandomService` is able to set the seed of an engine when the
    * engine is registered via either:
-   *  * `createEngine()` (creation of a new CLHEP engine)
+   *  * `registerAndSeedEngine()` (creation of a new CLHEP engine)
    *  * `registerEngine()` (registration of an engine or a seeder function),
    *    if the registered seeder function is valid (non-null) or if a CLHEP
    *    engine is being registered (in which case the seeder is automatically
@@ -364,8 +354,7 @@ namespace rndm {
    * `registerEngine()`. Likewise, a global engine can be declared first with
    * `declareEngine()`, then instantiated, and then optionally defined with
    * `defineEngine()`. This is completely analogous to the module-context
-   * engines. The only difference is that no `createEngine()` interface is
-   * available for global engines.
+   * engines.
    * Whether these methods create a global or module engine depends only
    * on the context they are called in.
    *
@@ -523,15 +512,10 @@ namespace rndm {
      * The life time of the engine is managed by art::RandomNumberGenerator,
      * while the seeding is managed by this service.
      *
-     * This is a replacement of art::detail::EngineCreator-derived classes.
-     * The use of createEngine() class of function is discouraged and this
-     * function might be removed in the future, because of its non-clean use of
-     * module interfaces.
-     * The recommended approach is more verbose;
-     * here an example for an engine with a non-default instance name:
+     * Here an example for an engine with a non-default instance name:
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
      * std::string const instanceName = "instanceName";
-     * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
+     * auto& Seeds = *art::ServiceHandle<rndm::NuRandomService>();
      *
      * // declare an engine; NuRandomService associates an (unknown) engine, in
      * // the current module and an instance name, with a seed (returned)
@@ -543,13 +527,6 @@ namespace rndm {
      * // finally, complete the registration; seed will be set again
      * Seeds.defineEngine(engine);
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *
-     * This is equivalent to the discouraged call
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
-     * auto& Seeds = *(art::ServiceHandle<rndm::NuRandomService>());
-     * Seeds.createEngine(*this, "HepJamesRandom", "instanceName");
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
     /// @{
 
     /**
@@ -560,11 +537,6 @@ namespace rndm {
      * @param seed the seed to use for this engine (optional)
      * @return the seed used
      * @see `registerEngine()`
-     *
-     * This method creates a new engine by calling
-     * `RandomNumberGenerator::createEngine()` with the seed from `getSeed()`.
-     * The meaning of the two parameters is the same as in that function,
-     * including the somehow inconvenient order of the arguments.
      *
      * The engine seed is set. If the `seed` optional parameter has a value,
      * that value is used as seed. Otherwise, the seed is obtained from
