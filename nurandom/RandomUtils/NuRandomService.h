@@ -527,6 +527,7 @@ namespace rndm {
      * // finally, complete the registration; seed will be set again
      * Seeds.defineEngine(engine);
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
     /// @{
 
     /**
