@@ -532,7 +532,7 @@ namespace rndm {
 
     /**
      * @brief Creates an engine with `art::RandomNumberGenerator` service.
-     * @param module module who will own the new engine
+     * @param engine the engine to register with the service
      * @param type the type of engine
      * @param instance the name of the engine instance
      * @param seed the seed to use for this engine (optional)
@@ -616,7 +616,6 @@ namespace rndm {
      * Also, the engine is always created of the default type and associated
      * with an empty instance name.
      */
-    template <typename Module>
     [[nodiscard]] std::reference_wrapper<engine_t> registerAndSeedEngine
       (engine_t& engine, SeedAtom const& seedParam)
       { return registerAndSeedEngine(engine, "", "", seedParam); }
