@@ -249,8 +249,8 @@ libdir	fq_dir		lib
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-art_root_io	v1_11_03	-
-cetmodules	v3_20_00	-	only_for_build
+art_root_io	v1_13_01	-
+cetmodules	v3_22_02	-	only_for_build
 end_product_list
 ####################################
 
@@ -310,6 +310,8 @@ c14:debug	c14:debug
 c14:prof	c14:prof
 e26:debug	e26:debug
 e26:prof	e26:prof
+e28:debug	e28:debug
+e28:prof	e28:prof
 end_qualifier_list
 ####################################
 
