@@ -1,7 +1,6 @@
 add_subdirectory(Providers)
 
 find_package(ROOT COMPONENTS Core REQUIRED)
-find_package(Boost COMPONENTS filesystem REQUIRED)
 
 cet_build_plugin(NuRandomService art::service
   LIBRARIES
