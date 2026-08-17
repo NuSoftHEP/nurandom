@@ -173,10 +173,6 @@ defaultqual	e26
 #     Wirecell data.
 #
 ####################################
-bindir	fq_dir		bin
-incdir	product_dir	include
-libdir	fq_dir		lib
-####################################
 
 ####################################
 # Product table.
